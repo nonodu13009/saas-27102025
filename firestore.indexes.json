@@ -1,0 +1,22 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "acts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "moisKey", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "acts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "moisKey", "order": "DESCENDING" },
+        { "fieldPath": "dateEffet", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
+

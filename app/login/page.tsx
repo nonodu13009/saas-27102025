@@ -1,0 +1,161 @@
+"use client";
+
+export const dynamic = 'force-dynamic';
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { login, register } from "@/lib/firebase/auth";
+import { PasswordInput } from "@/components/ui/password-input";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import Image from "next/image";
+
+const loginSchema = z.object({
+  email: z.string().email("Email invalide").refine(
+    (email) => email.endsWith("@allianz-marseille.fr"),
+    "L'email doit se terminer par @allianz-marseille.fr"
+  ),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const {
+    register: registerField,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      await login(data.email, data.password);
+      toast.success("Connexion réussie !");
+      router.push("/dashboard");
+    } catch (error: any) {
+      toast.error(error.message || "Erreur de connexion");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Boutons de dev pour tester rapidement
+  const handleDevLogin = async (email: string) => {
+    setIsLoading(true);
+    try {
+      // Simuler une connexion sans authentification réelle en dev
+      toast.success("Connexion dev réussie !");
+      
+      if (email.includes("admin")) {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-center mb-8">
+          <Image
+            src="/allianz.svg"
+            alt="Allianz Marseille"
+            width={150}
+            height={40}
+            priority
+            className="h-12 w-auto"
+          />
+        </div>
+        
+        <Card>
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">
+              Connexion
+            </CardTitle>
+            <CardDescription className="text-center">
+              Accédez à votre espace Allianz Marseille
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="vous@allianz-marseille.fr"
+                  {...registerField("email")}
+                  disabled={isLoading}
+                />
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe</Label>
+                <PasswordInput
+                  id="password"
+                  placeholder="••••••••"
+                  {...registerField("password")}
+                  disabled={isLoading}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-[#00529B] hover:bg-[#003d73]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Connexion..." : "Se connecter"}
+              </Button>
+            </form>
+
+            {/* Boutons de dev - à retirer en production */}
+            <div className="mt-6 pt-6 border-t space-y-2">
+              <p className="text-sm text-center text-muted-foreground mb-3">
+                Accès rapide dev
+              </p>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleDevLogin("admin@allianz-marseille.fr")}
+                disabled={isLoading}
+              >
+                Connexion ADMIN (dev)
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleDevLogin("commercial@allianz-marseille.fr")}
+                disabled={isLoading}
+              >
+                Connexion CDC (dev)
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
