@@ -174,7 +174,7 @@ Toutes les sections suivantes sont filtrées selon le mois sélectionné :
 
 #### Types d'actes disponibles
 1. **AN** - Apport Nouveau
-2. **M+3** - Renouvellement
+2. **M+3** - Bilan client
 3. **PRETERME_AUTO** - Préterme Auto
 4. **PRETERME_IRD** - Préterme IRD
 
@@ -198,7 +198,7 @@ Toutes les sections suivantes sont filtrées selon le mois sélectionné :
 **Étape 1 : Sélection du type d'acte**
 L'utilisateur choisit parmi 4 types d'actes via des boutons cliquables :
 - **AN** (Apport Nouveau)
-- **M+3** (Renouvellement)
+- **M+3** (Bilan client)
 - **PRETERME_AUTO** (Préterme Auto)
 - **PRETERME_IRD** (Préterme IRD)
 

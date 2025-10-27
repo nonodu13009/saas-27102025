@@ -37,7 +37,7 @@ const CONTRACT_TYPES = [
 
 const ACT_KINDS = [
   { value: "AN", label: "AN - Apport Nouveau" },
-  { value: "M+3", label: "M+3 - Renouvellement" },
+  { value: "M+3", label: "M+3 - Bilan client" },
   { value: "PRETERME_AUTO", label: "Préterme Auto" },
   { value: "PRETERME_IRD", label: "Préterme IRD" },
 ];
