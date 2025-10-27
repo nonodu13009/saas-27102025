@@ -10,6 +10,22 @@ Le dashboard commercial permet aux CDC de suivre leurs performances commerciales
 
 **Accès :** Tous les utilisateurs ayant le rôle `CDC_COMMERCIAL` ou `ADMINISTRATEUR`
 
+## 🎯 Principe de fonctionnement
+
+**Le mois sélectionné détermine tout l'affichage du dashboard.**
+
+Quel que soit le mois choisi dans le sélecteur, il conditionne :
+- **Les KPIs** : Tous les indicateurs sont calculés uniquement pour le mois sélectionné
+- **La Timeline** : L'affichage des jours correspond uniquement au mois choisi
+- **Les données du tableau** : La liste des actes affichée est filtrée par le mois sélectionné
+
+**Exemple :** Si vous sélectionnez "Février 2025" :
+- Les CA affichés dans les KPIs correspondent uniquement à février 2025
+- La timeline montre les jours de février 2025
+- Le tableau liste uniquement les actes de février 2025
+
+Changer de mois recharge automatiquement toutes ces données.
+
 ## 🔐 Système d'authentification
 
 ### Protection des routes
@@ -23,6 +39,8 @@ Le dashboard commercial permet aux CDC de suivre leurs performances commerciales
 - Récupération des données utilisateur depuis Firestore
 
 ## 📊 Tableaux de bord (KPIs)
+
+**⚠️ Important :** Tous les KPIs sont calculés sur la base des données du mois sélectionné dans le sélecteur mensuel.
 
 Le dashboard affiche 10 KPI cards permettant de suivre les performances commerciales :
 
@@ -122,6 +140,29 @@ Sinon : `commissionValidee = false`
 - Select dropdown avec liste déroulante
 - Format localisé en français
 
+### ⚙️ Impact sur l'affichage
+
+**La navigation mensuelle conditionne l'affichage de toutes les données :**
+
+Toutes les sections suivantes sont filtrées selon le mois sélectionné :
+
+1. **KPIs (10 indicateurs)** 
+   - Calculs basés uniquement sur les actes du mois sélectionné
+   - CA mensuel, commissions, ratio, etc. sont recalculés
+
+2. **Timeline**
+   - Affichage des jours du mois sélectionné
+   - Comptage des actes par jour du mois choisi
+
+3. **Liste des actes**
+   - Filtrée pour ne montrer que les actes du mois sélectionné
+   - Format : `moisKey` (ex: "2025-01" pour janvier 2025)
+
+**Comportement :**
+- Le mois par défaut est le mois actuel
+- Changement de mois → recharge automatique des données
+- Format interne : `YYYY-MM` (ISO 8601)
+
 ## 📝 Gestion des actes commerciaux
 
 ### Création d'un nouvel acte
@@ -171,7 +212,8 @@ Sinon : `commissionValidee = false`
 ### Liste des actes
 
 **Section :** "Actes commerciaux"  
-**Affichage :** Liste des actes du mois sélectionné
+**Affichage :** Liste des actes du mois sélectionné  
+**⚠️ Filtre :** Affichage uniquement pour le mois sélectionné dans le sélecteur
 
 **Informations affichées :**
 - Nom du client (gras)
@@ -187,7 +229,8 @@ Sinon : `commissionValidee = false`
 ## 📆 Timeline
 
 **Section :** "Timeline"  
-**Objectif :** Visualisation des actes sur le mois sélectionné
+**Objectif :** Visualisation des actes sur le mois sélectionné  
+**⚠️ Filtre :** Affichage uniquement pour le mois sélectionné dans le sélecteur
 
 **Fonctionnalités :**
 - Affichage de tous les jours du mois
