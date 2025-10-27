@@ -193,8 +193,17 @@ Toutes les sections suivantes sont filtrées selon le mois sélectionné :
 1. **ALLIANZ** - Allianz
 2. **AUTRE** - Autre compagnie
 
-#### Champs du formulaire
-- **Type d'acte*** (obligatoire)
+#### Modal en 2 étapes
+
+**Étape 1 : Sélection du type d'acte**
+L'utilisateur choisit parmi 4 types d'actes via des boutons cliquables :
+- **AN** (Apport Nouveau)
+- **M+3** (Renouvellement)
+- **PRETERME_AUTO** (Préterme Auto)
+- **PRETERME_IRD** (Préterme IRD)
+
+**Étape 2 : Formulaire détaillé**
+Après sélection du type d'acte, le formulaire s'affiche avec :
 - **Nom du client*** (obligatoire, texte libre)
 - **Numéro de contrat*** (obligatoire, texte libre)
 - **Type de contrat*** (obligatoire)
@@ -202,6 +211,11 @@ Toutes les sections suivantes sont filtrées selon le mois sélectionné :
 - **Date d'effet*** (obligatoire, sélecteur de date)
 - **Prime annuelle** (optionnel, conditionnel au type de contrat)
 - **Montant versé** (optionnel, uniquement pour VIE_PU)
+
+**Navigation :**
+- Bouton retour (←) pour revenir à l'étape 1
+- Bouton "Annuler" pour fermer la modale
+- Bouton "Créer l'acte" pour valider
 
 #### Règles de gestion
 - La **Prime annuelle** s'affiche pour : AUTO_MOTO, IRD_PART, IRD_PRO, PJ, GAV, NOP_50_EUR, SANTE_PREV, VIE_PP
