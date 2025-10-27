@@ -63,26 +63,7 @@ export default function LoginPage() {
     }
   };
 
-  // Boutons de dev pour tester rapidement
-  const handleDevLogin = async (email: string) => {
-    setIsLoading(true);
-    try {
-      // Simuler une connexion sans authentification réelle en dev
-      // En production, ces boutons devront être supprimés
-      toast.success("Connexion dev réussie !");
-      
-      // Redirection selon le type d'utilisateur
-      if (email.includes("admin")) {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
@@ -144,29 +125,6 @@ export default function LoginPage() {
                 {isLoading ? "Connexion..." : "Se connecter"}
               </Button>
             </form>
-
-            {/* Boutons de dev - à retirer en production */}
-            <div className="mt-6 pt-6 border-t space-y-2">
-              <p className="text-sm text-center text-muted-foreground mb-3">
-                Accès rapide dev
-              </p>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => handleDevLogin("admin@allianz-nogaro.fr")}
-                disabled={isLoading}
-              >
-                Connexion ADMIN (dev)
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => handleDevLogin("commercial@allianz-nogaro.fr")}
-                disabled={isLoading}
-              >
-                Connexion CDC (dev)
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
