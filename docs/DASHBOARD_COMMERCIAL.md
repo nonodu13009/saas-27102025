@@ -26,7 +26,7 @@ Quel que soit le mois choisi dans le sélecteur, il conditionne :
 
 Changer de mois recharge automatiquement toutes ces données.
 
-**Règle importante :** Un acte ne peut apparaître que dans le mois correspondant à sa date d'effet. Par exemple, un acte saisi en juin 2025 avec une date d'effet en juin 2025 ne s'affichera jamais en octobre 2025, même si vous filtrez sur octobre.
+**Règle importante :** Un acte ne peut apparaître que dans le mois correspondant à sa **date de création** (date de saisie automatique dans le système). Par exemple, un acte saisi en juin 2025 avec une date d'effet en juin 2025 ne s'affichera jamais en octobre 2025, même si vous filtrez sur octobre. Le critère de filtrage est la date de création, pas la date d'effet.
 
 ## 🔐 Système d'authentification
 
@@ -214,8 +214,8 @@ Toutes les sections suivantes sont filtrées selon le mois sélectionné :
 #### Date de saisie vs Date d'effet
 - **Date de saisie** (`dateSaisie`) : Date à laquelle l'acte est créé dans le système (automatique)
 - **Date d'effet** (`dateEffet`) : Date choisie par l'utilisateur lors de la création
-- **Critère d'affichage :** C'est la **date d'effet** qui détermine dans quel mois l'acte apparaîtra
-- Exemple : Un acte saisi le 15 juin 2025 avec une date d'effet du 10 mai 2025 apparaîtra dans les données de mai 2025
+- **Critère d'affichage :** C'est la **date de saisie** qui détermine dans quel mois l'acte apparaîtra
+- Exemple : Un acte saisi le 15 juin 2025 avec une date d'effet du 10 mai 2025 apparaîtra dans les données de juin 2025 (le mois de création)
 
 ### Liste des actes
 
