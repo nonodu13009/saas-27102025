@@ -25,12 +25,14 @@ export interface UserData {
   createdAt: Date;
 }
 
-const ALLOWED_DOMAIN = "@allianz-marseille.fr";
+const ALLOWED_DOMAINS = ["@allianz-nogaro.fr"];
 
 export const login = async (email: string, password: string) => {
   if (!auth) throw new Error('Firebase not initialized');
-  if (!email.endsWith(ALLOWED_DOMAIN)) {
-    throw new Error(`Email doit se terminer par ${ALLOWED_DOMAIN}`);
+  
+  const isValidDomain = ALLOWED_DOMAINS.some(domain => email.endsWith(domain));
+  if (!isValidDomain) {
+    throw new Error(`Email doit se terminer par ${ALLOWED_DOMAINS.join(' ou ')}`);
   }
 
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -43,8 +45,10 @@ export const register = async (
   role: "ADMINISTRATEUR" | "CDC_COMMERCIAL"
 ) => {
   if (!auth || !db) throw new Error('Firebase not initialized');
-  if (!email.endsWith(ALLOWED_DOMAIN)) {
-    throw new Error(`Email doit se terminer par ${ALLOWED_DOMAIN}`);
+  
+  const isValidDomain = ALLOWED_DOMAINS.some(domain => email.endsWith(domain));
+  if (!isValidDomain) {
+    throw new Error(`Email doit se terminer par ${ALLOWED_DOMAINS.join(' ou ')}`);
   }
 
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);

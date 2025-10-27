@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { login, register } from "@/lib/firebase/auth";
+import { login, getUserData } from "@/lib/firebase/auth";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Image from "next/image";
+import { ROLES } from "@/lib/utils/roles";
 
 const loginSchema = z.object({
   email: z.string().email("Email invalide").refine(
-    (email) => email.endsWith("@allianz-marseille.fr"),
-    "L'email doit se terminer par @allianz-marseille.fr"
+    (email) => email.endsWith("@allianz-nogaro.fr"),
+    "L'email doit se terminer par @allianz-nogaro.fr"
   ),
   password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
 });
@@ -40,9 +41,21 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      await login(data.email, data.password);
+      const firebaseUser = await login(data.email, data.password);
+      
+      // Récupérer le rôle de l'utilisateur
+      if (firebaseUser) {
+        const userData = await getUserData(firebaseUser.uid);
+        
+        // Rediriger selon le rôle
+        if (userData?.role === ROLES.ADMINISTRATEUR) {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
+      }
+      
       toast.success("Connexion réussie !");
-      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Erreur de connexion");
     } finally {
@@ -55,8 +68,10 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       // Simuler une connexion sans authentification réelle en dev
+      // En production, ces boutons devront être supprimés
       toast.success("Connexion dev réussie !");
       
+      // Redirection selon le type d'utilisateur
       if (email.includes("admin")) {
         router.push("/admin");
       } else {
@@ -75,7 +90,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center mb-8">
           <Image
             src="/allianz.svg"
-            alt="Allianz Marseille"
+            alt="Allianz"
             width={150}
             height={40}
             priority
@@ -89,7 +104,7 @@ export default function LoginPage() {
               Connexion
             </CardTitle>
             <CardDescription className="text-center">
-              Accédez à votre espace Allianz Marseille
+              Accédez à votre espace Allianz
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -99,7 +114,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="vous@allianz-marseille.fr"
+                  placeholder="vous@allianz-nogaro.fr"
                   {...registerField("email")}
                   disabled={isLoading}
                 />
@@ -138,7 +153,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => handleDevLogin("admin@allianz-marseille.fr")}
+                onClick={() => handleDevLogin("admin@allianz-nogaro.fr")}
                 disabled={isLoading}
               >
                 Connexion ADMIN (dev)
@@ -146,7 +161,7 @@ export default function LoginPage() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => handleDevLogin("commercial@allianz-marseille.fr")}
+                onClick={() => handleDevLogin("commercial@allianz-nogaro.fr")}
                 disabled={isLoading}
               >
                 Connexion CDC (dev)

@@ -18,8 +18,22 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { Act } from "@/types";
 import { NewActDialog } from "@/components/acts/new-act-dialog";
+import { RouteGuard } from "@/components/auth/route-guard";
+import { logout } from "@/lib/firebase/auth";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Déconnexion réussie");
+      router.push("/login");
+    } catch (error) {
+      toast.error("Erreur lors de la déconnexion");
+    }
+  };
   const [acts, setActs] = useState<Act[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -68,7 +82,8 @@ export default function DashboardPage() {
   const timelineDays = generateTimeline(selectedMonth);
 
   return (
-    <div className="min-h-screen bg-background">
+    <RouteGuard>
+      <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -84,6 +99,13 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              size="sm"
+            >
+              Déconnexion
+            </Button>
           </div>
         </div>
       </header>
@@ -258,7 +280,8 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </main>
-    </div>
+      </div>
+    </RouteGuard>
   );
 }
 

@@ -9,28 +9,51 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Building2, Settings } from "lucide-react";
+import { RouteGuard } from "@/components/auth/route-guard";
+import { logout } from "@/lib/firebase/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function AdminPage() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Déconnexion réussie");
+      router.push("/login");
+    } catch (error) {
+      toast.error("Erreur lors de la déconnexion");
+    }
+  };
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/allianz.svg"
-              alt="Allianz"
-              width={100}
-              height={26}
-              className="h-6 w-auto"
-            />
-            <h1 className="text-xl font-bold">Dashboard Administrateur</h1>
+    <RouteGuard allowedRoles={["ADMINISTRATEUR"]}>
+      <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b bg-card">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Image
+                src="/allianz.svg"
+                alt="Allianz"
+                width={100}
+                height={26}
+                className="h-6 w-auto"
+              />
+              <h1 className="text-xl font-bold">Dashboard Administrateur</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+                size="sm"
+              >
+                Déconnexion
+              </Button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+        </header>
 
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="users" className="space-y-6">
@@ -98,7 +121,8 @@ export default function AdminPage() {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
+      </div>
+    </RouteGuard>
   );
 }
 
