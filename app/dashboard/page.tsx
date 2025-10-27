@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { DollarSign, TrendingUp, FileText, Award, Plus } from "lucide-react";
+import { DollarSign, FileText, Award, Plus, Receipt, Car, Building2, Scale } from "lucide-react";
 import { KPICard } from "@/components/dashboard/kpi-card";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { calculateKPI } from "@/lib/utils/kpi";
+import { formatCurrency } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Act } from "@/types";
+import { NewActDialog } from "@/components/acts/new-act-dialog";
 
 export default function DashboardPage() {
   const [acts, setActs] = useState<Act[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>(
     format(new Date(), "yyyy-MM")
   );
@@ -54,6 +57,10 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleActCreated = () => {
+    loadActs();
   };
 
   const kpi = calculateKPI(acts);
@@ -99,34 +106,78 @@ export default function DashboardPage() {
               </SelectContent>
             </Select>
           </div>
-          <Button className="bg-[#00529B] hover:bg-[#003d73]">
+          <Button 
+            className="bg-[#00529B] hover:bg-[#003d73]"
+            onClick={() => setIsDialogOpen(true)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Nouvel acte
           </Button>
         </div>
 
+        {/* Dialog Nouvel Acte */}
+        <NewActDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          onSuccess={handleActCreated}
+        />
+
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <KPICard
             title="CA Mensuel"
-            value={`${kpi.caMensuel.toFixed(2)} €`}
+            value={formatCurrency(kpi.caMensuel)}
             icon={DollarSign}
           />
           <KPICard
-            title="CA Auto"
-            value={`${kpi.caAuto.toFixed(2)} €`}
-            subtitle={`${kpi.caAutres.toFixed(2)} € autres`}
-            icon={TrendingUp}
+            title="CA Auto / Moto"
+            value={formatCurrency(kpi.caAuto)}
+            icon={Car}
+          />
+          <KPICard
+            title="CA Autres"
+            value={formatCurrency(kpi.caAutres)}
+            icon={Building2}
+          />
+          <KPICard
+            title="Nombre de contrats"
+            value={kpi.nbContrats.toString()}
+            icon={Receipt}
+          />
+          <KPICard
+            title="Contrats Auto / Moto"
+            value={kpi.nbContratsAuto.toString()}
+            icon={Car}
+          />
+          <KPICard
+            title="Contrats Autres"
+            value={kpi.nbContratsAutres.toString()}
+            icon={Building2}
           />
           <KPICard
             title="Ratio"
             value={`${kpi.ratio.toFixed(1)}%`}
+            subtitle="Objectif ≥ 100%"
+            icon={Scale}
+            trend={kpi.ratio >= 100 ? "up" : "down"}
+          />
+          <KPICard
+            title="Nombre de process"
+            value={kpi.nbProcess.toString()}
+            subtitle="M+3, Pré-terme auto, Pré-terme IRD"
             icon={FileText}
           />
           <KPICard
-            title="Commissions"
-            value={`${kpi.commissionsPotentielles.toFixed(2)} €`}
-            subtitle={kpi.commissionValidee ? "Validées" : "Potentielles"}
+            title="Commissions potentielles"
+            value={formatCurrency(kpi.commissionsPotentielles)}
+            subtitle={kpi.commissionValidee ? "Validées" : "En attente"}
+            icon={Award}
+            trend={kpi.commissionValidee ? "up" : "neutral"}
+          />
+          <KPICard
+            title="Commissions réelles"
+            value={formatCurrency(kpi.commissionsReelles)}
+            subtitle={kpi.commissionValidee ? "Actives" : "Non validées"}
             icon={Award}
             trend={kpi.commissionValidee ? "up" : "neutral"}
           />
@@ -195,7 +246,7 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">{act.commissionPotentielle.toFixed(2)} €</p>
+                      <p className="font-semibold">{formatCurrency(act.commissionPotentielle)}</p>
                       <p className="text-sm text-muted-foreground">
                         {format(act.dateEffet, "dd/MM/yyyy")}
                       </p>

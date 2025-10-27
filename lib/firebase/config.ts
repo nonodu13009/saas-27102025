@@ -18,11 +18,19 @@ let db: Firestore | undefined;
 
 if (typeof window !== 'undefined') {
   try {
-    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    auth = getAuth(app);
-    db = getFirestore(app);
+    // Vérifier si les credentials sont valides
+    const hasValidConfig = firebaseConfig.apiKey && 
+                           firebaseConfig.apiKey !== 'your_api_key_here' &&
+                           firebaseConfig.projectId && 
+                           firebaseConfig.projectId !== 'your_project_id';
+    
+    if (hasValidConfig) {
+      app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+      auth = getAuth(app);
+      db = getFirestore(app);
+    }
   } catch (error) {
-    console.error('Firebase initialization error:', error);
+    console.warn('Firebase not configured or invalid credentials');
   }
 }
 

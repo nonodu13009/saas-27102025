@@ -21,6 +21,13 @@ export const calculateKPI = (acts: Act[]): KPI => {
   const nbContrats = acts.length;
   const ratio = nbContratsAuto === 0 ? 100 : (nbContratsAutres / nbContratsAuto) * 100;
   
+  // Calcul du nombre de process (M+3, PRETERME_AUTO, PRETERME_IRD uniquement)
+  const nbProcess = acts.filter(act => 
+    act.kind === "M+3" || 
+    act.kind === "PRETERME_AUTO" || 
+    act.kind === "PRETERME_IRD"
+  ).length;
+  
   const commissionsPotentielles = acts.reduce((sum, act) => sum + act.commissionPotentielle, 0);
   
   // Validation des commissions si :
@@ -29,7 +36,7 @@ export const calculateKPI = (acts: Act[]): KPI => {
   // 3. ratio ≥ 100 %
   const commissionValidee = 
     commissionsPotentielles >= 200 && 
-    nbContrats >= 15 && 
+    nbProcess >= 15 && 
     ratio >= 100;
   
   const commissionsReelles = commissionValidee ? commissionsPotentielles : 0;
@@ -42,7 +49,7 @@ export const calculateKPI = (acts: Act[]): KPI => {
     nbContratsAuto,
     nbContratsAutres,
     ratio,
-    nbProcess: nbContrats,
+    nbProcess,
     commissionsPotentielles,
     commissionsReelles,
     commissionValidee,
