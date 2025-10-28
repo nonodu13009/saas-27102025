@@ -18,10 +18,12 @@ export default function AdminHome() {
         <CardContent className="p-6">
           <div className="grid grid-cols-3 gap-4 items-center">
             <div className="text-center">
-              <h2 className="text-3xl font-bold">Bonjour !</h2>
+              <h2 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                Bonjour !
+              </h2>
             </div>
             <div className="text-center">
-              <span className="text-xl text-muted-foreground">
+              <span className="text-xl font-semibold text-orange-600 dark:text-orange-500">
                 {formattedDate}
               </span>
             </div>

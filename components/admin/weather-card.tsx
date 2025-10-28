@@ -77,13 +77,13 @@ export function WeatherCard() {
   };
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-2 flex-wrap">
       {getWeatherIcon()}
-      <span className="text-base">
+      <span className="text-base font-bold text-purple-600 dark:text-purple-400">
         {weather.temp}
       </span>
       {weather.description && (
-        <span className="text-sm text-muted-foreground capitalize">
+        <span className="text-sm text-blue-600 dark:text-blue-400 capitalize">
           {weather.description}
         </span>
       )}
