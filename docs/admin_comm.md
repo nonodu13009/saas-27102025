@@ -1,7 +1,26 @@
 # Visualisation de l'activité des commerciaux - Page Admin
 
-## Objectif
-Permettre aux administrateurs de visualiser l'activité des commerciaux sur la page d'accueil admin.
+## ✅ Décision prise
+
+**Affichage identique au dashboard commercial, avec filtrage par commercial.**
+
+## Structure
+
+### 1. Page d'accueil (`/admin`)
+- Message de bienvenue (Bonjour ! + Date + Météo)
+- Même affichage que le dashboard commercial mais en mode "cumulé" par défaut
+
+### 2. Affichage
+- **KPIs** : Calculés sur tous les commerciaux ou un commercial sélectionné
+- **Timeline** : Vue mensuelle calendrier (même système que commercial)
+- **Tableau** : Liste des actes (même format que commercial)
+- **Navigation mensuelle** : Flèches gauche/droite pour naviguer entre les mois
+
+### 3. Filtres
+**Sous la navigation mensuelle :**
+- **Par défaut** : "Tous" → Affichage cumulé de tous les commerciaux
+- **Select déroulant** : Choix d'un commercial spécifique
+- Les KPIs, timeline et tableau s'adaptent au filtre sélectionné
 
 ## Contexte actuel
 - Page d'accueil admin : Bonjour + Date + Météo Marseille
@@ -43,142 +62,171 @@ Chaque acte contient :
 }
 ```
 
-## Questions à explorer
+## Décisions validées
 
-### 1. Quelles informations afficher ?
-- [ ] Nombre d'actes créés aujourd'hui
-- [ ] Nombre d'actes créés ce mois
-- [ ] Répartition par type d'acte (AN, M+3, etc.)
-- [ ] Commercial le plus actif
-- [ ] Graphique d'activité mensuelle
-- [ ] Montant de CA total
-- [ ] Taux de commission
-- [ ] Liste des derniers actes créés
+### 1. Informations à afficher
+✅ **Identique au dashboard commercial** :
+- KPI Cards (CA Mensuel, CA Auto, CA Autres, Nb contrats, etc.)
+- Timeline calendrier avec actes
+- Tableau récapitulatif des actes avec actions (modifier, supprimer, voir note)
 
-### 2. Par qui filtrer ?
-- [ ] Tous les commerciaux
-- [ ] Commercial spécifique
-- [ ] Par équipe/service
+### 2. Filtrage
+✅ **Deux modes** :
+- **"Tous"** (par défaut) → Cumule les données de tous les commerciaux
+- **Select commercial** → Filtre les données pour un commercial spécifique
 
-### 3. Quelle période ?
-- [ ] Aujourd'hui
-- [ ] Ce mois
-- [ ] Ce trimestre
-- [ ] Derniers 6 mois
-- [ ] Personnalisable
+### 3. Période
+✅ **Même navigation mensuelle** :
+- Flèches gauche/droite pour naviguer entre les mois
+- Mois sélectionné affiché au centre
+- Calcul des KPIs pour le mois sélectionné
 
 ### 4. Format de visualisation
-- [ ] KPI Cards (comme dashboard commercial)
-- [ ] Tableau de données
-- [ ] Graphiques (bar, line, pie)
-- [ ] Timeline/activité en temps réel
-- [ ] Liste des actes avec détails
+✅ **Structure identique au dashboard commercial** :
+- KPI Cards (8 KPIs identiques)
+- Timeline calendrier (7 jours avec actes)
+- Tableau récapitulatif (liste avec actions)
 
-## Idées de sections
+## Structure de la page
 
-### Section 1 : Vue d'ensemble
-**KPIs globaux**
-- Total actes aujourd'hui
-- Total actes ce mois
-- Total CA ce mois
-- Nombre de commerciaux actifs
-- Commercial du mois (celui avec le plus d'actes)
-
-### Section 2 : Top commerciaux
-**Classement des commerciaux**
-- Top 3 commerciaux du mois
-- Nombre d'actes chacun
-- CA généré
-- Commission moyenne
-
-### Section 3 : Répartition des actes
-**Par type d'acte**
-- AN : X actes
-- M+3 : X actes
-- Préterme Auto : X actes
-- Préterme IRD : X actes
-
-### Section 4 : Activité récente
-**Derniers actes créés**
-- Liste des 5-10 derniers actes
-- Nom du client
-- Type d'acte
-- Commercial
-- Date de création
-
-### Section 5 : Graphiques
-**Visualisations**
-- Graphique évolution mensuelle (ligne)
-- Répartition par type (camembert)
-- Top commerciaux (barres)
-
-## Questions ouvertes
-
-1. **Niveau de détail** : 
-   - Vue globale seulement ?
-   - Possibilité de cliquer pour voir les détails ?
-   - Pagination ou lazy loading ?
-
-2. **Temps réel** :
-   - Update automatique toutes les X secondes ?
-   - Refresh manuel seulement ?
-
-3. **Performance** :
-   - Combien de commerciaux au total ?
-   - Estimation du nombre d'actes à charger ?
-   - Caching nécessaire ?
-
-4. **Export** :
-   - Export PDF/Excel des données ?
-   - Rapport hebdomadaire/mensuel automatique ?
-
-## Suggestion de structure initiale
-
+### Layout
 ```
-┌─────────────────────────────────────────────────────────┐
-│ Bonjour ! | Date | Météo                                │
-└─────────────────────────────────────────────────────────┘
-
-┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐
-│ Actes     │ │ CA Mensuel│ │ Actifs    │ │ Top 1     │
-│ Aujourd'hui│ │           │ │ Commerciaux│ │Commercial │
-│   15      │ │  45 200€   │ │    8      │ │  Dupont   │
-└───────────┘ └───────────┘ └───────────┘ └───────────┘
-
-┌──────────────────────────────┐ ┌──────────────────┐
-│ Répartition par type         │ │ Top commerciaux   │
-│ [Graphique camembert]        │ │ [Graphique barres]│
-└──────────────────────────────┘ └──────────────────┘
-
-┌──────────────────────────────────────────────────────┐
-│ Derniers actes créés                                 │
-│ [Liste des 10 derniers actes avec détails]          │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ Header avec sidebar                                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [Message Bienvenue + Date + Météo - 3 colonnes]           │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  Navigation mensuelle : [<] Novembre 2024 [>]               │
+│  Filtre : [Tous ▼] ou [Commercial ▼]                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐   │
+│  │ KPI 1  │ │ KPI 2  │ │ KPI 3  │ │ KPI 4  │ │ KPI 5  │   │
+│  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘   │
+│  ┌────────┐ ┌────────┐ ┌────────┐                          │
+│  │ KPI 6  │ │ KPI 7  │ │ KPI 8  │                          │
+│  └────────┘ └────────┘ └────────┘                          │
+│                                                             │
+├─────────────────────────────────────────────────────────────┤
+│  Timeline calendrier (7 jours avec actes)                  │
+├─────────────────────────────────────────────────────────────┤
+│  Tableau récapitulatif                                      │
+│  [Liste des actes avec actions]                            │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## Tâches à prioriser
+### Réutilisation du code
+- **Composant `KPICard`** : Déjà existant, réutilisable
+- **Timeline** : Fonction `generateTimeline()` à adapter
+- **Tableau** : Même structure que dashboard commercial
+- **Navigation mensuelle** : Même système (flèches + mois)
 
-1. **Phase 1 - MVP** (priorité haute)
-   - [ ] KPI Cards (4-5 KPIs principaux)
-   - [ ] Liste des derniers actes
+## Détails techniques
 
-2. **Phase 2 - Analytics** (priorité moyenne)
-   - [ ] Graphiques d'évolution
-   - [ ] Top commerciaux
-   - [ ] Répartition par type
+### Filtres
+**Sous la navigation mensuelle :**
+```jsx
+<div className="flex items-center justify-between">
+  <div className="flex items-center gap-4">
+    {/* Navigation mensuelle existante */}
+    <ChevronLeft onClick={previousMonth} />
+    <span>{currentMonth}</span>
+    <ChevronRight onClick={nextMonth} />
+  </div>
+  
+  {/* Nouveau filtre commercial */}
+  <div className="flex items-center gap-2">
+    <Label>Voir :</Label>
+    <Select value={selectedCommercial} onValueChange={setSelectedCommercial}>
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">Tous les commerciaux</SelectItem>
+        {commerciaux.map(com => (
+          <SelectItem key={com.id} value={com.id}>{com.email}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+</div>
+```
 
-3. **Phase 3 - Advanced** (priorité basse)
-   - [ ] Filtres avancés
-   - [ ] Export de données
-   - [ ] Notifications temps réel
+### Logique de calcul
+**Pour "Tous"** :
+```typescript
+// Récupérer tous les actes du mois sélectionné
+const allActs = await getActsByMonth(null, selectedMonth); // null = tous
+const kpi = calculateKPI(allActs); // Calcul global
+```
+
+**Pour un commercial** :
+```typescript
+// Récupérer les actes du commercial sélectionné
+const acts = await getActsByMonth(selectedCommercial, selectedMonth);
+const kpi = calculateKPI(acts); // Calcul pour ce commercial
+```
+
+## Structure finale
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Bonjour ! | Date | Météo (3 colonnes égales)                │
+└──────────────────────────────────────────────────────────────┘
+
+[Navigation mensuelle : < Novembre 2024 >]  [Voir : Tous ▼]
+
+┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+│ CA      │ │ CA Auto │ │ CA     │ │ Nb      │ │ Contrats│
+│ Mensuel │ │         │ │ Autres │ │ Contrats│ │ Auto    │
+│ 45 200€ │ │ 12 000€ │ │ 33 200€│ │   25    │ │   15    │
+└─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
+┌─────────┐ ┌─────────┐ ┌─────────┐
+│ Contrats│ │ Ratio   │ │ Nb      │
+│ Autres  │ │  150%   │ │ Process │
+│   10    │ │         │ │    5    │
+└─────────┘ └─────────┘ └─────────┘
+
+[Timeline calendrier 7 jours avec actes]
+
+[Tableau récapitulatif des actes]
+```
+
+## Tâches à implémenter
+
+### Phase 1 - Structure de base ✅
+- [x] Message de bienvenue + météo
+- [x] Layout admin avec sidebar
+- [ ] **Adapter la page admin pour afficher KPIs + Timeline + Tableau**
+
+### Phase 2 - Fonctionnalités Core 🔄
+- [ ] Créer composant `admin/activity-overview.tsx`
+- [ ] Ajouter navigation mensuelle (réutiliser système commercial)
+- [ ] Ajouter filtre "Tous" / Select commercial
+- [ ] Adapter fonction `getActsByMonth` pour gérer userId ou "all"
+- [ ] Calculer KPIs en mode "Tous" (tous les commerciaux)
+- [ ] Calculer KPIs en mode "Commercial" (filtre par userId)
+
+### Phase 3 - Timeline et tableau ✅
+- [ ] Adapter `generateTimeline` pour filtrer par commercial
+- [ ] Tableau avec actions (même comportement que commercial)
+- [ ] Gérer permissions : admin peut voir/modifier/supprimer tous les actes
+
+### Phase 4 - Optimisations
+- [ ] Performance : Chargement optimisé des actes
+- [ ] Cache des données si nécessaire
+- [ ] Gestion des erreurs
 
 ## Prochaines étapes
 
-1. Valider la structure avec l'utilisateur
-2. Définir les KPIs exacts à afficher
-3. Créer les composants nécessaires
-4. Implémenter les appels Firestore
-5. Ajouter les graphiques si besoin
+1. ✅ Décision validée : Même affichage que commercial + filtre
+2. **Créer la page `/admin` avec KPIs + Timeline + Tableau**
+3. **Ajouter navigation mensuelle + filtre commercial**
+4. **Implémenter logique de cumul "Tous" vs filtre commercial**
+5. **Tester et valider**
 
 ---
 
