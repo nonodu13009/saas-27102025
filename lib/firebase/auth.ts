@@ -2,7 +2,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  User,
 } from "firebase/auth";
 import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
 import { auth, db } from "./config";
@@ -108,5 +107,43 @@ export const getAllCommercials = async (): Promise<UserData[]> => {
     .filter((user) => user.role === "CDC_COMMERCIAL" && user.active);
   
   return users;
+};
+
+export const getAllUsers = async (): Promise<UserData[]> => {
+  if (!db) return [];
+  
+  const querySnapshot = await getDocs(collection(db, "users"));
+  const users = querySnapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: data.id,
+      email: data.email,
+      role: data.role,
+      active: data.active,
+      createdAt: data.createdAt?.toDate() || new Date(),
+    } as UserData;
+  });
+  
+  return users;
+};
+
+export const updateUserRole = async (
+  userId: string,
+  role: "ADMINISTRATEUR" | "CDC_COMMERCIAL"
+): Promise<void> => {
+  if (!db) throw new Error('Firebase not initialized');
+  
+  const userRef = doc(db, "users", userId);
+  await setDoc(userRef, { role }, { merge: true });
+};
+
+export const toggleUserActive = async (
+  userId: string,
+  active: boolean
+): Promise<void> => {
+  if (!db) throw new Error('Firebase not initialized');
+  
+  const userRef = doc(db, "users", userId);
+  await setDoc(userRef, { active }, { merge: true });
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Building2, LogOut } from "lucide-react";
+import { Home, Building2, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -19,6 +19,11 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
       label: "Accueil",
       icon: Home,
       exact: true,
+    },
+    {
+      href: "/admin/users",
+      label: "Utilisateurs",
+      icon: Users,
     },
     {
       href: "/admin/companies",
