@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Cloud, Sun, CloudRain, Wind } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface WeatherData {
   temp: number;
@@ -44,31 +43,23 @@ export function WeatherCard() {
 
   if (loading) {
     return (
-      <Card className="w-full max-w-md">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3">
-            <Cloud className="h-8 w-8 animate-pulse text-muted-foreground" />
-            <div>
-              <p className="text-sm text-muted-foreground">Chargement météo...</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center gap-3">
+        <Cloud className="h-8 w-8 animate-pulse text-muted-foreground" />
+        <div>
+          <p className="text-sm text-muted-foreground">Chargement météo...</p>
+        </div>
+      </div>
     );
   }
 
   if (!weather) {
     return (
-      <Card className="w-full max-w-md">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-3">
-            <Cloud className="h-8 w-8 text-muted-foreground" />
-            <div>
-              <p className="text-sm text-muted-foreground">Météo non disponible</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center gap-3">
+        <Cloud className="h-8 w-8 text-muted-foreground" />
+        <div>
+          <p className="text-sm text-muted-foreground">Météo non disponible</p>
+        </div>
+      </div>
     );
   }
 
@@ -83,20 +74,14 @@ export function WeatherCard() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {getWeatherIcon()}
-            <div>
-              <p className="text-sm text-muted-foreground">Marseille</p>
-              <p className="text-2xl font-bold">{weather.temp}°C</p>
-              <p className="text-sm capitalize">{weather.description}</p>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center gap-4">
+      {getWeatherIcon()}
+      <div>
+        <p className="text-sm text-muted-foreground">Marseille</p>
+        <p className="text-2xl font-bold">{weather.temp}°C</p>
+        <p className="text-sm capitalize">{weather.description}</p>
+      </div>
+    </div>
   );
 }
 

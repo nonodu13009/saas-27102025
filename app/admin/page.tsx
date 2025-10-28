@@ -13,19 +13,25 @@ export default function AdminHome() {
   });
 
   return (
-    <div className="space-y-6">
+    <div>
       <Card className="w-full">
         <CardContent className="p-8">
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold tracking-tight">Bienvenue</h2>
-            <p className="text-xl text-muted-foreground">
-              {formattedDate}
-            </p>
+          <div className="space-y-6">
+            {/* Message de bienvenue */}
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl font-bold tracking-tight">Bienvenue</h2>
+              <p className="text-xl text-muted-foreground">
+                {formattedDate}
+              </p>
+            </div>
+
+            {/* Météo */}
+            <div className="flex justify-center pt-4 border-t">
+              <WeatherCard />
+            </div>
           </div>
         </CardContent>
       </Card>
-
-      <WeatherCard />
     </div>
   );
 }
