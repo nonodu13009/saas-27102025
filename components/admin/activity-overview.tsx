@@ -17,6 +17,7 @@ import { getAllCommercials, type UserData } from "@/lib/firebase/auth";
 import { toast } from "sonner";
 import { Timestamp } from "firebase/firestore";
 import { CommercialsRanking } from "./commercials-ranking";
+import { ContractTypeRanking } from "./contract-type-ranking";
 
 interface ActivityOverviewProps {
   initialMonth?: string;
@@ -337,6 +338,9 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
 
       {/* Classement des commerciaux */}
       <CommercialsRanking monthKey={selectedMonth} />
+      
+      {/* Classement par type de contrat */}
+      <ContractTypeRanking monthKey={selectedMonth} />
     </div>
   );
 }
