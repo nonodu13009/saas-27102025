@@ -46,10 +46,12 @@ export function AdminSidebar({ onLogout }: AdminSidebarProps) {
             return (
               <Link key={item.href} href={item.href}>
                 <Button
-                  variant={isActive ? "secondary" : "ghost"}
+                  variant="ghost"
                   className={cn(
-                    "w-full justify-start gap-3",
-                    isActive && "bg-primary/10 hover:bg-primary/20"
+                    "w-full justify-start gap-3 transition-colors",
+                    isActive 
+                      ? "bg-primary text-primary-foreground font-semibold hover:bg-primary/90" 
+                      : "hover:bg-accent"
                   )}
                 >
                   <Icon className="h-5 w-5" />
