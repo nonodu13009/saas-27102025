@@ -31,10 +31,10 @@ const CONTRACT_TYPES = [
   { value: "IRD_PRO", label: "IRD Professionnel" },
   { value: "PJ", label: "Protection Juridique" },
   { value: "GAV", label: "GAV (Garantie Accident Vie)" },
-  { value: "NOP_50_EUR", label: "NO Promise 50€" },
+  { value: "NOP_50_EUR", label: "NOP 50 euros" },
   { value: "SANTE_PREV", label: "Santé / Prévoyance" },
-  { value: "VIE_PP", label: "Vie en Préparation" },
-  { value: "VIE_PU", label: "Vie en Publication" },
+  { value: "VIE_PP", label: "Vie PP (Epargne ou Retraite)" },
+  { value: "VIE_PU", label: "Vie PU (Versement libre)" },
 ];
 
 const ACT_KINDS = [
