@@ -118,45 +118,61 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Navigation mensuelle + Filtre */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="icon" onClick={previousMonth}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="text-lg font-semibold min-w-[140px] text-center">
-                {format(new Date(selectedMonth + "-01"), "MMMM yyyy", { locale: fr })}
-              </span>
-              <Button variant="outline" size="icon" onClick={nextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+    <div className="space-y-8">
+      {/* Section 1 : Activité Mensuelle */}
+      <Card className="border-l-4 border-l-blue-500 relative">
+        <div className="absolute -top-1 left-0 right-0 h-1 bg-blue-500 rounded-t-lg z-10" />
+        <CardHeader className="bg-blue-50/50 dark:bg-blue-950/20">
+          <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+            <ClipboardCheck className="h-5 w-5" />
+            Activité Mensuelle
+          </CardTitle>
+          <CardDescription>
+            Navigation mensuelle affecte les KPIs, Timeline et Tableau ci-dessous
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          {/* Navigation mensuelle + Filtre */}
+          <div className="bg-blue-50/30 dark:bg-blue-950/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                <Button variant="outline" size="icon" onClick={previousMonth}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-lg font-semibold min-w-[140px] text-center">
+                  {format(new Date(selectedMonth + "-01"), "MMMM yyyy", { locale: fr })}
+                </span>
+                <Button variant="outline" size="icon" onClick={nextMonth}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <Label htmlFor="commercial-filter">Voir :</Label>
-              <Select value={selectedCommercial} onValueChange={setSelectedCommercial}>
-                <SelectTrigger id="commercial-filter" className="w-[200px]">
-                  <SelectValue placeholder="Sélectionner un commercial" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les commerciaux</SelectItem>
-                  {commerciaux.map((com) => (
-                    <SelectItem key={com.id} value={com.id}>
-                      {com.email}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="commercial-filter">Voir :</Label>
+                <Select value={selectedCommercial} onValueChange={setSelectedCommercial}>
+                  <SelectTrigger id="commercial-filter" className="w-[200px]">
+                    <SelectValue placeholder="Sélectionner un commercial" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les commerciaux</SelectItem>
+                    {commerciaux.map((com) => (
+                      <SelectItem key={com.id} value={com.id}>
+                        {com.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* KPI Cards */}
+          <div>
+            <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-4 flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Indicateurs de performance
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="CA Mensuel"
           value={formatCurrency(kpi.caMensuel)}
@@ -210,30 +226,15 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
           icon={Target}
           colorScheme="pink"
         />
-      </div>
+            </div>
+          </div>
 
-      {/* Section 1 : Activité Générale */}
-      <Card className="border-l-4 border-l-blue-500 relative">
-        <div className="absolute -top-1 left-0 right-0 h-1 bg-blue-500 rounded-t-lg z-10" />
-        <CardHeader className="bg-blue-50/50 dark:bg-blue-950/20">
-          <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
-            <ClipboardCheck className="h-5 w-5" />
-            Activité Générale
-            <span className="ml-2 text-xs font-normal px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
-              Vue d&apos;ensemble
-            </span>
-          </CardTitle>
-          <CardDescription>
-            Timeline et liste complète des actes du mois
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
           {/* Timeline */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <h3 className="font-semibold text-sm text-blue-700 dark:text-blue-400">Timeline</h3>
-            </div>
+            <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-4 flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Timeline
+            </h3>
             <div className="overflow-x-auto">
               <div className="flex gap-2 min-w-max">
                 {generateTimeline(selectedMonth, acts).map((day, index) => (
@@ -265,10 +266,10 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
 
           {/* Tableau des actes */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <ClipboardCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <h3 className="font-semibold text-sm text-blue-700 dark:text-blue-400">Actes commerciaux</h3>
-            </div>
+            <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-400 mb-4 flex items-center gap-2">
+              <ClipboardCheck className="h-4 w-4" />
+              Tableau récapitulatif des actes
+            </h3>
             {acts.length === 0 ? (
               <p className="text-center py-8 text-muted-foreground">Aucun acte pour ce mois</p>
             ) : (

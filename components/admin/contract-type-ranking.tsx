@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarChart, BarChart3 } from "lucide-react";
@@ -130,13 +130,15 @@ export function ContractTypeRanking({ monthKey }: ContractTypeRankingProps) {
       
       <CardHeader className="bg-purple-50/50 dark:bg-purple-950/20">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
-            <BarChart3 className="h-5 w-5" />
-            Classement par type de contrat
-            <span className="ml-2 text-xs font-normal px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full">
-              Spécialisé
-            </span>
-          </CardTitle>
+          <div>
+            <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
+              <BarChart3 className="h-5 w-5" />
+              Section 3 : Classement par type de contrat
+            </CardTitle>
+            <CardDescription className="mt-1">
+              Classement des commerciaux pour chaque type de contrat
+            </CardDescription>
+          </div>
           <div className="flex items-center gap-2">
             <Label htmlFor="contract-type-select">Type :</Label>
             <Select value={selectedContractType} onValueChange={setSelectedContractType}>

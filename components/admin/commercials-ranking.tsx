@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trophy, Medal, Award, TrendingUp } from "lucide-react";
@@ -278,17 +278,19 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
       
       <CardHeader className="bg-green-50/50 dark:bg-green-950/20">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-            <TrendingUp className="h-5 w-5" />
-            Classement des commerciaux
-            <span className="ml-2 text-xs font-normal px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
-              Performance
-            </span>
-          </CardTitle>
+          <div>
+            <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
+              <TrendingUp className="h-5 w-5" />
+              Section 2 : Classement des commerciaux
+            </CardTitle>
+            <CardDescription className="mt-1">
+              Classement par critères pour le mois sélectionné
+            </CardDescription>
+          </div>
           <div className="flex items-center gap-2">
             <Label htmlFor="criterion-select">Critère :</Label>
             <Select value={selectedCriterion} onValueChange={setSelectedCriterion}>
-              <SelectTrigger id="criterion-select" className="w-[200px]">
+              <SelectTrigger id="criterion-select" className="w-[220px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
