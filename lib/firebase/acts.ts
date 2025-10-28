@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, Timestamp, doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, Timestamp, doc, deleteDoc, updateDoc, getDoc, or } from "firebase/firestore";
 import { db } from "./config";
 
 export interface Act {
@@ -74,14 +74,26 @@ export const createAct = async (act: any): Promise<Act> => {
   } as Act;
 };
 
-export const getActsByMonth = async (userId: string, monthKey: string): Promise<Act[]> => {
+// Modifier getActsByMonth pour accepter userId optionnel (null = tous les commerciaux)
+export const getActsByMonth = async (userId: string | null, monthKey: string): Promise<Act[]> => {
   if (!db) return [];
   
-  const q = query(
-    collection(db, "acts"),
-    where("userId", "==", userId),
-    where("moisKey", "==", monthKey)
-  );
+  let q;
+  
+  if (userId === null) {
+    // Récupérer tous les actes du mois (mode admin "Tous")
+    q = query(
+      collection(db, "acts"),
+      where("moisKey", "==", monthKey)
+    );
+  } else {
+    // Récupérer les actes d'un commercial spécifique
+    q = query(
+      collection(db, "acts"),
+      where("userId", "==", userId),
+      where("moisKey", "==", monthKey)
+    );
+  }
 
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
@@ -167,4 +179,3 @@ export const getActById = async (actId: string): Promise<Act | null> => {
   
   return { id: actDoc.id, ...actDoc.data() } as Act;
 };
-

@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { WeatherCard } from "@/components/admin/weather-card";
+import { ActivityOverview } from "@/components/admin/activity-overview";
 
 export default function AdminHome() {
   const today = new Date();
@@ -13,7 +14,8 @@ export default function AdminHome() {
   });
 
   return (
-    <div>
+    <div className="space-y-6">
+      {/* Message de bienvenue */}
       <Card className="w-full">
         <CardContent className="p-6">
           <div className="grid grid-cols-3 gap-4 items-center">
@@ -33,6 +35,9 @@ export default function AdminHome() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Vue activité */}
+      <ActivityOverview />
     </div>
   );
 }

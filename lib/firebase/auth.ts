@@ -4,7 +4,7 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, getDocs, collection } from "firebase/firestore";
 import { auth, db } from "./config";
 
 export interface UserRole {
@@ -88,5 +88,25 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
   }
 
   return null;
+};
+
+export const getAllCommercials = async (): Promise<UserData[]> => {
+  if (!db) return [];
+  
+  const querySnapshot = await getDocs(collection(db, "users"));
+  const users = querySnapshot.docs
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        id: data.id,
+        email: data.email,
+        role: data.role,
+        active: data.active,
+        createdAt: data.createdAt?.toDate() || new Date(),
+      } as UserData;
+    })
+    .filter((user) => user.role === "CDC_COMMERCIAL" && user.active);
+  
+  return users;
 };
 
