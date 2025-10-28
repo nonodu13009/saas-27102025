@@ -195,6 +195,151 @@ const kpi = calculateKPI(acts); // Calcul pour ce commercial
 [Tableau récapitulatif des actes]
 ```
 
+## Classement des commerciaux - Nouvel outil 📊
+
+### Objectif
+Permettre à l'admin de visualiser et comparer les performances des commerciaux via un diagramme coloré classé par critère.
+
+### Localisation
+- Page : `/admin` (accueil, section dédiée)
+- Position : Après le tableau récapitulatif
+
+### Fonctionnalités
+
+#### 1. Selecteur de critère
+**Options disponibles :**
+- [x] ✅ Commissions réelles (par défaut)
+- [ ] CA total
+- [ ] CA non auto
+- [ ] Nombre total d'actes
+- [ ] Commissions potentielles
+- [ ] Nombre de contrats auto
+- [ ] Nombre de contrats autres
+- [ ] Ratio CA auto / CA autres
+- [ ] Nombre de process
+- [ ] Taux de validation des commissions
+
+#### 2. Diagramme coloré
+**Type de visualisation :**
+- **Graphique en barres horizontales** (recommandé)
+- Chaque barre représente un commercial
+- Couleurs dégradées (vert = meilleur, rouge = moins bon)
+- Ordre décroissant (meilleur en haut)
+- Valeurs affichées sur chaque barre
+
+#### 3. Informations affichées par commercial
+- Nom (email)
+- Position (#1, #2, #3...)
+- Valeur du critère sélectionné
+- Pourcentage de différence avec le premier
+
+### Structure proposée
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Classement des commerciaux                                  │
+├─────────────────────────────────────────────────────────────┤
+│ Critère : [Commissions réelles ▼]                          │
+│                                                             │
+│ ┌─────────────────────────────────────┐                    │
+│ │ Jean Dupont            ████████ 5 200€                 │
+│ │ Marie Martin           ██████ 3 800€                   │
+│ │ Pierre Durand          █████ 2 500€                    │
+│ │ Sophie Bernard         ████ 1 900€                    │
+│ │ ...                    ...                            │
+│ └─────────────────────────────────────┘                    │
+│                                                             │
+│ Légende :                                                   │
+│ ░░░░ Très faible  ▓▓▓▓ Moyen  ████ Élevé              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Calcul des critères
+
+#### Commissions réelles (défaut)
+```typescript
+commercial.commissionReelle = sum(acts.commissionReelle)
+```
+
+#### CA total
+```typescript
+commercial.caTotal = sum(acts.primeAnnuelle + acts.montantVersement)
+```
+
+#### CA non auto
+```typescript
+commercial.caNonAuto = sum(acts where contratType !== "AUTO_MOTO")
+```
+
+#### Nombre total d'actes
+```typescript
+commercial.nbActes = count(acts)
+```
+
+#### Commissions potentielles
+```typescript
+commercial.commissionPotentielle = sum(acts.commissionPotentielle)
+```
+
+#### Nombre de contrats auto
+```typescript
+commercial.nbContratsAuto = count(acts where contratType === "AUTO_MOTO")
+```
+
+#### Nombre de contrats autres
+```typescript
+commercial.nbContratsAutres = count(acts where contratType !== "AUTO_MOTO")
+```
+
+#### Ratio
+```typescript
+commercial.ratio = (caAuto / caAutres) * 100
+```
+
+#### Nombre de process
+```typescript
+commercial.nbProcess = count(acts where kind in ["M+3", "PRETERME_AUTO", "PRETERME_IRD"])
+```
+
+#### Taux de validation
+```typescript
+commercial.tauxValidation = (commissionReelle / commissionPotentielle) * 100
+```
+
+### Couleurs du diagramme
+
+**Palette recommandée :**
+```css
+/* Pour le classement */
+1ère place : bg-green-600 (vert foncé)
+2ème place : bg-green-500
+3ème place : bg-green-400
+Autres : bg-gradient (vert → jaune → orange → rouge)
+```
+
+**Alternative par pourcentage :**
+```css
+Top 20% : vert foncé
+20-40% : vert clair
+40-60% : jaune
+60-80% : orange
+80-100% : rouge
+```
+
+### Données à charger
+
+**Pour chaque commercial :**
+1. Récupérer tous ses actes du mois sélectionné
+2. Calculer le critère sélectionné
+3. Trier par valeur décroissante
+4. Afficher dans le diagramme
+
+### Permissions
+- Admin peut voir les performances de tous les commerciaux
+- Les commerciaux ne voient pas cet outil (page admin uniquement)
+
+---
+
 ## Tâches à implémenter
 
 ### Phase 1 - Structure de base ✅
@@ -215,7 +360,16 @@ const kpi = calculateKPI(acts); // Calcul pour ce commercial
 - [ ] Tableau avec actions (même comportement que commercial)
 - [ ] Gérer permissions : admin peut voir/modifier/supprimer tous les actes
 
-### Phase 4 - Optimisations
+### Phase 4 - Classement des commerciaux 📊 NEW
+- [ ] Créer composant `admin/commercials-ranking.tsx`
+- [ ] Ajouter select de critère de classement
+- [ ] Créer fonction de calcul par critère
+- [ ] Implémenter graphique en barres horizontales
+- [ ] Ajouter système de couleurs dégradées
+- [ ] Afficher statistiques (rang, valeur, % différence)
+- [ ] Gérer le mois sélectionné (navigation mensuelle)
+
+### Phase 5 - Optimisations
 - [ ] Performance : Chargement optimisé des actes
 - [ ] Cache des données si nécessaire
 - [ ] Gestion des erreurs
