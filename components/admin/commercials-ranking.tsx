@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, TrendingUp } from "lucide-react";
 import { getActsByMonth, type Act } from "@/lib/firebase/acts";
 import { getAllCommercials, type UserData } from "@/lib/firebase/auth";
 import { toast } from "sonner";
@@ -272,10 +272,19 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-l-4 border-l-green-500 relative">
+      <div className="absolute -top-1 left-0 right-0 h-1 bg-green-500 rounded-t-lg" />
+      <div className="absolute -left-1 top-0 bottom-0 w-1 bg-green-500 rounded-l-lg" />
+      
+      <CardHeader className="bg-green-50/50 dark:bg-green-950/20">
         <div className="flex items-center justify-between">
-          <CardTitle>Classement des commerciaux</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
+            <TrendingUp className="h-5 w-5" />
+            Classement des commerciaux
+            <span className="ml-2 text-xs font-normal px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
+              Performance
+            </span>
+          </CardTitle>
           <div className="flex items-center gap-2">
             <Label htmlFor="criterion-select">Critère :</Label>
             <Select value={selectedCriterion} onValueChange={setSelectedCriterion}>

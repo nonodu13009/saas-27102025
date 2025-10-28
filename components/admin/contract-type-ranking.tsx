@@ -124,12 +124,18 @@ export function ContractTypeRanking({ monthKey }: ContractTypeRankingProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="border-l-4 border-l-purple-500 relative">
+      <div className="absolute -top-1 left-0 right-0 h-1 bg-purple-500 rounded-t-lg" />
+      <div className="absolute -left-1 top-0 bottom-0 w-1 bg-purple-500 rounded-l-lg" />
+      
+      <CardHeader className="bg-purple-50/50 dark:bg-purple-950/20">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-400">
             <BarChart3 className="h-5 w-5" />
             Classement par type de contrat
+            <span className="ml-2 text-xs font-normal px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-full">
+              Spécialisé
+            </span>
           </CardTitle>
           <div className="flex items-center gap-2">
             <Label htmlFor="contract-type-select">Type :</Label>

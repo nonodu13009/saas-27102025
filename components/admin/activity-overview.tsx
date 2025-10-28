@@ -212,14 +212,35 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
         />
       </div>
 
-      {/* Timeline */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Timeline</CardTitle>
-          <CardDescription>
-            Visualisation des actes sur le mois sélectionné
-          </CardDescription>
-        </CardHeader>
+      {/* Section 1 : Activité Générale */}
+      <div className="relative space-y-6">
+        <div className="absolute -top-1 left-0 right-0 h-1 bg-blue-500 rounded-t-lg z-10" />
+        <div className="absolute -left-1 top-0 bottom-0 w-1 bg-blue-500 rounded-l-lg z-10" />
+        
+        <div className="bg-blue-50/50 dark:bg-blue-950/20 border-l-4 border-l-blue-500 p-4 rounded-lg">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-blue-700 dark:text-blue-400">
+            <ClipboardCheck className="h-5 w-5" />
+            Activité Générale
+            <span className="ml-2 text-xs font-normal px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+              Vue d&apos;ensemble
+            </span>
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Timeline et liste complète des actes du mois
+          </p>
+        </div>
+        
+        {/* Timeline */}
+        <Card className="border-l-4 border-l-blue-500 ml-6">
+          <CardHeader className="bg-blue-50/30 dark:bg-blue-950/10">
+            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+              <FileText className="h-4 w-4" />
+              Timeline
+            </CardTitle>
+            <CardDescription>
+              Visualisation des actes sur le mois sélectionné
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <div className="flex gap-2 min-w-max">
@@ -248,14 +269,17 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
         </CardContent>
       </Card>
 
-      {/* Tableau des actes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Actes commerciaux</CardTitle>
-          <CardDescription>
-            Liste de tous les actes du mois sélectionné
-          </CardDescription>
-        </CardHeader>
+        {/* Tableau des actes */}
+        <Card className="border-l-4 border-l-blue-500 mt-6 ml-6">
+          <CardHeader className="bg-blue-50/30 dark:bg-blue-950/10">
+            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+              <ClipboardCheck className="h-4 w-4" />
+              Actes commerciaux
+            </CardTitle>
+            <CardDescription>
+              Liste de tous les actes du mois sélectionné
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           {acts.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">Aucun acte pour ce mois</p>
@@ -334,12 +358,13 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
             </div>
           )}
         </CardContent>
-      </Card>
+        </Card>
+      </div>
 
-      {/* Classement des commerciaux */}
+      {/* Section 2 : Classement des commerciaux */}
       <CommercialsRanking monthKey={selectedMonth} />
       
-      {/* Classement par type de contrat */}
+      {/* Section 3 : Classement par type de contrat */}
       <ContractTypeRanking monthKey={selectedMonth} />
     </div>
   );
