@@ -16,12 +16,18 @@ export default function AdminHome() {
     <div>
       <Card className="w-full">
         <CardContent className="p-6">
-          <div className="flex items-center justify-center gap-4 flex-wrap">
-            <h2 className="text-3xl font-bold">Bonjour !</h2>
-            <span className="text-xl text-muted-foreground">
-              {formattedDate}
-            </span>
-            <WeatherCard />
+          <div className="grid grid-cols-3 gap-4 items-center">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold">Bonjour !</h2>
+            </div>
+            <div className="text-center">
+              <span className="text-xl text-muted-foreground">
+                {formattedDate}
+              </span>
+            </div>
+            <div className="text-center">
+              <WeatherCard />
+            </div>
           </div>
         </CardContent>
       </Card>

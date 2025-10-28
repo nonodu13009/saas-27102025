@@ -77,7 +77,7 @@ export function WeatherCard() {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center gap-2">
       {getWeatherIcon()}
       <span className="text-base">
         {weather.temp}
