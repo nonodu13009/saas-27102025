@@ -158,7 +158,9 @@ export const updateAct = async (actId: string, updates: Partial<Act>): Promise<v
     updateData.dateEffet = Timestamp.fromDate(updates.dateEffet);
   }
   if (updates.dateSaisie) {
-    updateData.dateSaisie = Timestamp.fromDate(updates.dateSaisie);
+    // dateSaisie peut être un Timestamp ou une Date
+    const dateSaisie = (updates as any).dateSaisie;
+    updateData.dateSaisie = dateSaisie instanceof Timestamp ? dateSaisie : Timestamp.fromDate(dateSaisie);
   }
   
   // Ajouter les autres champs

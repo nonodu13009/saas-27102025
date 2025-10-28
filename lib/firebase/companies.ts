@@ -112,6 +112,8 @@ export const replaceCompanyInActs = async (oldCompany: string, newCompany: strin
   if (!db) throw new Error('Firebase not initialized');
   
   try {
+    if (!db) throw new Error('Firebase not initialized');
+    
     // Récupérer tous les actes avec cette compagnie
     const actsRef = collection(db, "acts");
     const q = query(actsRef, where("compagnie", "==", oldCompany));
@@ -119,7 +121,7 @@ export const replaceCompanyInActs = async (oldCompany: string, newCompany: strin
     
     // Mettre à jour chaque acte
     const updatePromises = querySnapshot.docs.map(async (docSnap) => {
-      const actRef = doc(db, "acts", docSnap.id);
+      const actRef = doc(db!, "acts", docSnap.id);
       await updateDoc(actRef, {
         compagnie: newCompany
       });

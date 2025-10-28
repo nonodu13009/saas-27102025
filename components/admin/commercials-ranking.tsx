@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trophy, Medal, Award } from "lucide-react";
+import { getActsByMonth, type Act } from "@/lib/firebase/acts";
+import { getAllCommercials, type UserData } from "@/lib/firebase/auth";
+import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 interface CommercialRanking {
   id: string;
@@ -17,13 +21,25 @@ interface CommercialsRankingProps {
   monthKey: string;
 }
 
+interface CommercialData {
+  userId: string;
+  email: string;
+  acts: Act[];
+  commissionReelle: number;
+  caTotal: number;
+  caNonAuto: number;
+  nbActes: number;
+  commissionPotentielle: number;
+  nbContratsAuto: number;
+  nbContratsAutres: number;
+  ratio: number;
+  nbProcess: number;
+}
+
 export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
   const [selectedCriterion, setSelectedCriterion] = useState<string>("commissionReelle");
-
-  // TODO: Récupérer les données des commerciaux pour le mois
-  const rankings: CommercialRanking[] = [
-    // Exemple de données statiques pour le prototype
-  ];
+  const [rankings, setRankings] = useState<CommercialRanking[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const criterionOptions = [
     { value: "commissionReelle", label: "Commissions réelles" },
@@ -36,6 +52,208 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
     { value: "ratio", label: "Ratio CA auto / CA autres" },
     { value: "nbProcess", label: "Nombre de process" },
   ];
+
+  // Charger et calculer les données des commerciaux
+  useEffect(() => {
+    const loadRankings = async () => {
+      setLoading(true);
+      try {
+        // Récupérer tous les commerciaux
+        const commercials = await getAllCommercials();
+        
+        // Récupérer les actes de tous les commerciaux pour le mois
+        const allActs = await getActsByMonth(null, monthKey);
+        
+        // Calculer les données par commercial
+        const commercialData: CommercialData[] = await Promise.all(
+          commercials.map(async (commercial) => {
+            const commercialActs = allActs.filter(act => act.userId === commercial.id);
+            
+            // Calculs
+            const commissionReelle = commercialActs.reduce((sum, act) => {
+              const commission = act.commissionReelle || 0;
+              return sum + commission;
+            }, 0);
+            
+            const caTotal = commercialActs.reduce((sum, act) => {
+              const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+              return sum + ca;
+            }, 0);
+            
+            const caNonAuto = commercialActs
+              .filter(act => act.contratType !== "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            const nbActes = commercialActs.length;
+            
+            const commissionPotentielle = commercialActs.reduce((sum, act) => {
+              return sum + (act.commissionPotentielle || 0);
+            }, 0);
+            
+            const nbContratsAuto = commercialActs.filter(
+              act => act.contratType === "AUTO_MOTO"
+            ).length;
+            
+            const nbContratsAutres = commercialActs.filter(
+              act => act.contratType !== "AUTO_MOTO"
+            ).length;
+            
+            const caAuto = commercialActs
+              .filter(act => act.contratType === "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            const ratio = caAuto && caAuto > 0 ? (caNonAuto / caAuto) * 100 : 0;
+            
+            const nbProcess = commercialActs.filter(
+              act => act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD"
+            ).length;
+            
+            return {
+              userId: commercial.id,
+              email: commercial.email,
+              acts: commercialActs,
+              commissionReelle,
+              caTotal,
+              caNonAuto,
+              nbActes,
+              commissionPotentielle,
+              nbContratsAuto,
+              nbContratsAutres,
+              ratio,
+              nbProcess,
+            };
+          })
+        );
+        
+        // Calculer le ranking basé sur le critère sélectionné
+        calculateRanking(commercialData);
+        
+      } catch (error) {
+        console.error("Erreur lors du chargement des classements:", error);
+        toast.error("Impossible de charger les classements");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (monthKey) {
+      loadRankings();
+    }
+  }, [monthKey]);
+
+  // Recalculer le ranking quand le critère change
+  useEffect(() => {
+    const loadAndCalculate = async () => {
+      try {
+        const commercials = await getAllCommercials();
+        const allActs = await getActsByMonth(null, monthKey);
+        
+        const commercialData: CommercialData[] = await Promise.all(
+          commercials.map(async (commercial) => {
+            const commercialActs = allActs.filter(act => act.userId === commercial.id);
+            
+            const commissionReelle = commercialActs.reduce((sum, act) => {
+              const commission = act.commissionReelle || 0;
+              return sum + commission;
+            }, 0);
+            
+            const caTotal = commercialActs.reduce((sum, act) => {
+              const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+              return sum + ca;
+            }, 0);
+            
+            const caNonAuto = commercialActs
+              .filter(act => act.contratType !== "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            const nbActes = commercialActs.length;
+            
+            const commissionPotentielle = commercialActs.reduce((sum, act) => {
+              return sum + (act.commissionPotentielle || 0);
+            }, 0);
+            
+            const nbContratsAuto = commercialActs.filter(
+              act => act.contratType === "AUTO_MOTO"
+            ).length;
+            
+            const nbContratsAutres = commercialActs.filter(
+              act => act.contratType !== "AUTO_MOTO"
+            ).length;
+            
+            const caAuto = commercialActs
+              .filter(act => act.contratType === "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            const ratio = caAuto && caAuto > 0 ? (caNonAuto / caAuto) * 100 : 0;
+            
+            const nbProcess = commercialActs.filter(
+              act => act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD"
+            ).length;
+            
+            return {
+              userId: commercial.id,
+              email: commercial.email,
+              acts: commercialActs,
+              commissionReelle,
+              caTotal,
+              caNonAuto,
+              nbActes,
+              commissionPotentielle,
+              nbContratsAuto,
+              nbContratsAutres,
+              ratio,
+              nbProcess,
+            };
+          })
+        );
+        
+        calculateRanking(commercialData);
+      } catch (error) {
+        console.error("Erreur lors du calcul du classement:", error);
+      }
+    };
+
+    if (monthKey) {
+      loadAndCalculate();
+    }
+  }, [selectedCriterion, monthKey]);
+
+  const calculateRanking = (data: CommercialData[]) => {
+    // Trier par le critère sélectionné
+    const sorted = [...data].sort((a, b) => {
+      const aValue = a[selectedCriterion as keyof CommercialData] as number;
+      const bValue = b[selectedCriterion as keyof CommercialData] as number;
+      return bValue - aValue;
+    });
+    
+    // Calculer les pourcentages
+    const maxValue = sorted[0]?.[selectedCriterion as keyof CommercialData] as number || 1;
+    const rankings: CommercialRanking[] = sorted.map((commercial, index) => {
+      const value = commercial[selectedCriterion as keyof CommercialData] as number;
+      const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
+      
+      return {
+        id: commercial.userId,
+        email: commercial.email,
+        value,
+        percentage,
+      };
+    });
+    
+    setRankings(rankings);
+  };
 
   const getBarColor = (index: number, total: number) => {
     const percentage = ((index + 1) / total) * 100;
@@ -76,32 +294,46 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
         </div>
       </CardHeader>
       <CardContent>
-        {rankings.length === 0 ? (
+        {loading ? (
+          <p className="text-center py-8 text-muted-foreground">Chargement...</p>
+        ) : rankings.length === 0 ? (
           <p className="text-center py-8 text-muted-foreground">
             Aucune donnée disponible pour ce mois
           </p>
         ) : (
           <div className="space-y-3">
-            {rankings.map((commercial, index) => (
-              <div key={commercial.id} className="flex items-center gap-4 p-3 border rounded-lg">
-                <div className="flex items-center gap-2 w-32">
-                  {getMedal(index)}
-                  <span className="text-sm font-medium truncate">
-                    {commercial.email}
-                  </span>
+            {rankings.map((commercial, index) => {
+              const isPercentage = selectedCriterion === "ratio";
+              const displayValue = isPercentage 
+                ? commercial.value.toFixed(2)
+                : commercial.value.toLocaleString('fr-FR', { 
+                    minimumFractionDigits: 0, 
+                    maximumFractionDigits: 0 
+                  });
+              
+              return (
+                <div key={commercial.id} className="flex items-center gap-4 p-3 border rounded-lg">
+                  <div className="flex items-center gap-2 w-32">
+                    {getMedal(index)}
+                    <span className="text-sm font-medium truncate">
+                      {commercial.email}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <div 
+                      className={`h-8 rounded transition-all ${getBarColor(index, rankings.length)}`}
+                      style={{ width: `${commercial.percentage}%` }}
+                    />
+                  </div>
+                  <div className="text-right w-32">
+                    <span className="font-semibold">{displayValue}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {" "}{isPercentage ? "%" : selectedCriterion.includes("nb") || selectedCriterion.includes("Nombre") ? "" : "€"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <div 
-                    className={`h-8 rounded transition-all ${getBarColor(index, rankings.length)}`}
-                    style={{ width: `${commercial.percentage}%` }}
-                  />
-                </div>
-                <div className="text-right w-24">
-                  <span className="font-semibold">{commercial.value.toLocaleString('fr-FR')}</span>
-                  <span className="text-sm text-muted-foreground"> {selectedCriterion === "ratio" ? "%" : "€"}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
