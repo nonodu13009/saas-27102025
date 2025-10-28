@@ -166,13 +166,13 @@ export default function DashboardPage() {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image
-              src="/allianz.svg"
-              alt="Allianz"
-              width={100}
-              height={26}
-              className="h-6 w-auto"
-            />
+              <Image
+                src="/allianz.svg"
+                alt="Allianz"
+                width={100}
+                height={26}
+                className="h-6 w-auto brightness-0 dark:brightness-100"
+              />
             <h1 className="text-xl font-bold">Dashboard Commercial</h1>
           </div>
           <div className="flex items-center gap-2">

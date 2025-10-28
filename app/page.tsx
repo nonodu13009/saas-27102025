@@ -67,7 +67,7 @@ export default function HomePage() {
                 width={150}
                 height={40}
                 priority
-                className="h-10 w-auto"
+                className="h-10 w-auto brightness-0 dark:brightness-100"
               />
             </div>
             <span className="text-xl font-bold text-[#00529B]">

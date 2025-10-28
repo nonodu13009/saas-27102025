@@ -44,7 +44,7 @@ export default function AdminLayout({
                   alt="Allianz"
                   width={100}
                   height={26}
-                  className="h-6 w-auto"
+                  className="h-6 w-auto brightness-0 dark:brightness-100"
                 />
                 <h1 className="text-xl font-bold">Dashboard Administrateur</h1>
               </div>
