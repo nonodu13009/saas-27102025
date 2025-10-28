@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Cloud, Sun, CloudRain, Wind } from "lucide-react";
 
 interface WeatherData {
-  temp: number;
+  temp: string;
   description: string;
   icon: string;
 }
@@ -16,20 +16,22 @@ export function WeatherCard() {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        // API météo gratuite OpenWeatherMap
+        // API météo gratuite wttr.in (pas besoin de clé)
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=Marseille&appid=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&units=metric&lang=fr`
+          'https://wttr.in/Marseille?format=%t+%C&lang=fr'
         );
         
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.text();
+          const parts = data.trim().split(' ');
+          const temp = parts[0]?.replace('+', '') || 'N/A';
+          const desc = parts.slice(1).join(' ').toLowerCase() || '';
+          
           setWeather({
-            temp: Math.round(data.main.temp),
-            description: data.weather[0].description,
-            icon: data.weather[0].icon,
+            temp: temp,
+            description: desc,
+            icon: '',
           });
-        } else {
-          console.error("Erreur récupération météo");
         }
       } catch (error) {
         console.error("Erreur API météo:", error);
@@ -64,23 +66,27 @@ export function WeatherCard() {
   }
 
   const getWeatherIcon = () => {
-    if (weather.icon.includes("01d") || weather.icon.includes("01n")) {
-      return <Sun className="h-12 w-12 text-yellow-500" />;
-    } else if (weather.icon.includes("09d") || weather.icon.includes("10d") || weather.icon.includes("09n") || weather.icon.includes("10n")) {
-      return <CloudRain className="h-12 w-12 text-blue-500" />;
+    const desc = weather.description.toLowerCase();
+    if (desc.includes('ensoleillé') || desc.includes('soleil') || desc.includes('clear')) {
+      return <Sun className="h-5 w-5 text-yellow-500" />;
+    } else if (desc.includes('pluie') || desc.includes('rain')) {
+      return <CloudRain className="h-5 w-5 text-blue-500" />;
     } else {
-      return <Cloud className="h-12 w-12 text-gray-500" />;
+      return <Cloud className="h-5 w-5 text-gray-500" />;
     }
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
       {getWeatherIcon()}
-      <div>
-        <p className="text-sm text-muted-foreground">Marseille</p>
-        <p className="text-2xl font-bold">{weather.temp}°C</p>
-        <p className="text-sm capitalize">{weather.description}</p>
-      </div>
+      <span className="text-base">
+        {weather.temp}
+      </span>
+      {weather.description && (
+        <span className="text-sm text-muted-foreground capitalize">
+          {weather.description}
+        </span>
+      )}
     </div>
   );
 }
