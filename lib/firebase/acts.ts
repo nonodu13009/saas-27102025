@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, Timestamp, doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "./config";
 
 export interface Act {
@@ -16,6 +16,7 @@ export interface Act {
   commissionPotentielle: number;
   commissionReelle?: number;
   moisKey: string;
+  note?: string;
 }
 
 export interface CommissionRule {
@@ -26,21 +27,42 @@ export interface CommissionRule {
   active: boolean;
 }
 
-export const createAct = async (act: Omit<Act, "id" | "dateSaisie" | "moisKey" | "commissionPotentielle">): Promise<Act> => {
+export const createAct = async (act: any): Promise<Act> => {
   if (!db) throw new Error('Firebase not initialized');
   
   const dateSaisie = new Date();
   const moisKey = dateSaisie.toISOString().slice(0, 7); // YYYY-MM
 
-  // Calculer la commission potentielle (logique à implémenter)
-  const commissionPotentielle = calculateCommission(act.contratType, act.primeAnnuelle || 0, act.montantVersement || 0);
+  // Pour les process (M+3, PRETERME_AUTO, PRETERME_IRD), on n'a pas de commission
+  const isProcess = act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD";
+  const commissionPotentielle = isProcess ? 0 : calculateCommission(act.contratType, act.primeAnnuelle || 0, act.montantVersement || 0);
 
-  const actData = {
-    ...act,
+  // Construire l'objet avec tous les champs définis (les champs undefined ont été filtrés par le composant)
+  const actData: Record<string, any> = {
+    userId: act.userId,
+    kind: act.kind,
+    clientNom: act.clientNom,
+    numeroContrat: act.numeroContrat,
+    contratType: act.contratType,
+    compagnie: act.compagnie,
+    dateEffet: Timestamp.fromDate(act.dateEffet),
     dateSaisie: Timestamp.fromDate(dateSaisie),
     moisKey,
     commissionPotentielle,
   };
+
+  // Ajouter les champs optionnels s'ils existent (déjà filtrés par le composant)
+  if (act.primeAnnuelle !== undefined) {
+    actData.primeAnnuelle = act.primeAnnuelle;
+  }
+  
+  if (act.montantVersement !== undefined) {
+    actData.montantVersement = act.montantVersement;
+  }
+  
+  if (act.note !== undefined) {
+    actData.note = act.note;
+  }
 
   const docRef = await addDoc(collection(db, "acts"), actData);
 
@@ -48,7 +70,8 @@ export const createAct = async (act: Omit<Act, "id" | "dateSaisie" | "moisKey" |
     id: docRef.id,
     ...actData,
     dateEffet: act.dateEffet,
-  };
+    dateSaisie: actData.dateSaisie,
+  } as Act;
 };
 
 export const getActsByMonth = async (userId: string, monthKey: string): Promise<Act[]> => {
@@ -104,5 +127,44 @@ export const getActsByUser = async (userId: string) => {
     id: doc.id,
     ...doc.data(),
   }));
+};
+
+export const deleteAct = async (actId: string): Promise<void> => {
+  if (!db) throw new Error('Firebase not initialized');
+  
+  await deleteDoc(doc(db, "acts", actId));
+};
+
+export const updateAct = async (actId: string, updates: Partial<Act>): Promise<void> => {
+  if (!db) throw new Error('Firebase not initialized');
+  
+  const actRef = doc(db, "acts", actId);
+  const updateData: Record<string, any> = {};
+  
+  // Convertir les dates en Timestamp si nécessaire
+  if (updates.dateEffet) {
+    updateData.dateEffet = Timestamp.fromDate(updates.dateEffet);
+  }
+  if (updates.dateSaisie) {
+    updateData.dateSaisie = Timestamp.fromDate(updates.dateSaisie);
+  }
+  
+  // Ajouter les autres champs
+  Object.entries(updates).forEach(([key, value]) => {
+    if (key !== 'dateEffet' && key !== 'dateSaisie' && value !== undefined) {
+      updateData[key] = value;
+    }
+  });
+  
+  await updateDoc(actRef, updateData);
+};
+
+export const getActById = async (actId: string): Promise<Act | null> => {
+  if (!db) return null;
+  
+  const actDoc = await getDoc(doc(db, "acts", actId));
+  if (!actDoc.exists()) return null;
+  
+  return { id: actDoc.id, ...actDoc.data() } as Act;
 };
 

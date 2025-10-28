@@ -21,6 +21,7 @@ export interface Act {
   commissionPotentielle: number;
   commissionReelle?: number;
   moisKey: string;
+  note?: string;
 }
 
 export interface Company {

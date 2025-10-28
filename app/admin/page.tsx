@@ -1,128 +1,86 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
-import { useState } from "react";
-import Image from "next/image";
-import { ThemeToggle } from "@/components/dashboard/theme-toggle";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Building2, Settings } from "lucide-react";
-import { RouteGuard } from "@/components/auth/route-guard";
-import { logout } from "@/lib/firebase/auth";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { Building2, Users, Settings, TrendingUp, Award } from "lucide-react";
 
-export default function AdminPage() {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success("Déconnexion réussie");
-      router.push("/login");
-    } catch (error) {
-      toast.error("Erreur lors de la déconnexion");
-    }
-  };
+export default function AdminHome() {
   return (
-    <RouteGuard allowedRoles={["ADMINISTRATEUR"]}>
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b bg-card">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/allianz.svg"
-                alt="Allianz"
-                width={100}
-                height={26}
-                className="h-6 w-auto"
-              />
-              <h1 className="text-xl font-bold">Dashboard Administrateur</h1>
-            </div>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                size="sm"
-              >
-                Déconnexion
-              </Button>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">Bienvenue</h2>
+        <p className="text-muted-foreground">
+          Gestion de l&apos;application Allianz
+        </p>
+      </div>
+
+      {/* Cards de statistiques */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Compagnies
+            </CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">2</div>
+            <p className="text-xs text-muted-foreground">
+              Compagnies système actives
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Utilisateurs
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">
+              Gestion à venir
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Performances
+            </CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">-</div>
+            <p className="text-xs text-muted-foreground">
+              Statistiques à venir
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Guide rapide */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Actions rapides</CardTitle>
+          <CardDescription>
+            Gérer les différents aspects de l&apos;application
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-2">
+          <div className="flex items-center gap-4 p-4 border rounded-lg hover:bg-accent transition-colors cursor-pointer">
+            <Building2 className="h-8 w-8 text-primary" />
+            <div>
+              <h3 className="font-semibold">Gérer les compagnies</h3>
+              <p className="text-sm text-muted-foreground">
+                Ajouter, modifier ou supprimer des compagnies
+              </p>
             </div>
           </div>
-        </header>
-
-      <main className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="users" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="users">
-              <Users className="mr-2 h-4 w-4" />
-              Utilisateurs
-            </TabsTrigger>
-            <TabsTrigger value="companies">
-              <Building2 className="mr-2 h-4 w-4" />
-              Compagnies
-            </TabsTrigger>
-            <TabsTrigger value="rules">
-              <Settings className="mr-2 h-4 w-4" />
-              Règles de commissions
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="users" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestion des utilisateurs</CardTitle>
-                <CardDescription>
-                  Activer, désactiver ou modifier les rôles des utilisateurs
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8 text-muted-foreground">
-                  Liste des utilisateurs à implémenter
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="companies" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestion des compagnies</CardTitle>
-                <CardDescription>
-                  Ajouter, modifier ou supprimer des compagnies d'assurance
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8 text-muted-foreground">
-                  Liste des compagnies à implémenter
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="rules" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Règles de commissions</CardTitle>
-                <CardDescription>
-                  Gérer les règles de calcul des commissions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8 text-muted-foreground">
-                  Configuration des règles à implémenter
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
-      </div>
-    </RouteGuard>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
-
