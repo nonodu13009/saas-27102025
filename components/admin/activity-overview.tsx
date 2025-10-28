@@ -213,153 +213,141 @@ export function ActivityOverview({ initialMonth }: ActivityOverviewProps) {
       </div>
 
       {/* Section 1 : Activité Générale */}
-      <div className="relative space-y-6">
+      <Card className="border-l-4 border-l-blue-500 relative">
         <div className="absolute -top-1 left-0 right-0 h-1 bg-blue-500 rounded-t-lg z-10" />
-        <div className="absolute -left-1 top-0 bottom-0 w-1 bg-blue-500 rounded-l-lg z-10" />
-        
-        <div className="bg-blue-50/50 dark:bg-blue-950/20 border-l-4 border-l-blue-500 p-4 rounded-lg">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-blue-700 dark:text-blue-400">
+        <CardHeader className="bg-blue-50/50 dark:bg-blue-950/20">
+          <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
             <ClipboardCheck className="h-5 w-5" />
             Activité Générale
             <span className="ml-2 text-xs font-normal px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
               Vue d&apos;ensemble
             </span>
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          </CardTitle>
+          <CardDescription>
             Timeline et liste complète des actes du mois
-          </p>
-        </div>
-        
-        {/* Timeline */}
-        <Card className="border-l-4 border-l-blue-500 ml-6">
-          <CardHeader className="bg-blue-50/30 dark:bg-blue-950/10">
-            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
-              <FileText className="h-4 w-4" />
-              Timeline
-            </CardTitle>
-            <CardDescription>
-              Visualisation des actes sur le mois sélectionné
-            </CardDescription>
-          </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <div className="flex gap-2 min-w-max">
-              {generateTimeline(selectedMonth, acts).map((day, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col items-center p-3 rounded-lg min-w-[80px] ${
-                    day.isSaturday ? "bg-orange-100 dark:bg-orange-900/20" :
-                    day.isSunday ? "bg-red-100 dark:bg-red-900/20" :
-                    "bg-muted"
-                  }`}
-                >
-                  <span className="text-xs font-medium">
-                    {format(day.date, "EEE", { locale: fr }).substring(0, 3)}
-                  </span>
-                  <span className="text-2xl font-bold">
-                    {format(day.date, "d")}
-                  </span>
-                  <span className="text-xs text-muted-foreground mt-1">
-                    {day.acts.length} acte{day.acts.length > 1 ? "s" : ""}
-                  </span>
-                </div>
-              ))}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Timeline */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <h3 className="font-semibold text-sm text-blue-700 dark:text-blue-400">Timeline</h3>
             </div>
+            <div className="overflow-x-auto">
+              <div className="flex gap-2 min-w-max">
+                {generateTimeline(selectedMonth, acts).map((day, index) => (
+                  <div
+                    key={index}
+                    className={`flex flex-col items-center p-3 rounded-lg min-w-[80px] ${
+                      day.isSaturday ? "bg-orange-100 dark:bg-orange-900/20" :
+                      day.isSunday ? "bg-red-100 dark:bg-red-900/20" :
+                      "bg-muted"
+                    }`}
+                  >
+                    <span className="text-xs font-medium">
+                      {format(day.date, "EEE", { locale: fr }).substring(0, 3)}
+                    </span>
+                    <span className="text-2xl font-bold">
+                      {format(day.date, "d")}
+                    </span>
+                    <span className="text-xs text-muted-foreground mt-1">
+                      {day.acts.length} acte{day.acts.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Séparateur */}
+          <div className="border-t border-blue-200 dark:border-blue-800" />
+
+          {/* Tableau des actes */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <ClipboardCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <h3 className="font-semibold text-sm text-blue-700 dark:text-blue-400">Actes commerciaux</h3>
+            </div>
+            {acts.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">Aucun acte pour ce mois</p>
+            ) : (
+              <div className="overflow-x-auto rounded-lg border">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-center p-3 font-semibold text-sm border-b w-12"></th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Date de saisie</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Type</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Client</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">N° Contrat</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Type Contrat</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Compagnie</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Date d&apos;effet</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Prime annuelle</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b">Commission</th>
+                      <th className="text-center p-3 font-semibold text-sm border-b w-20">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {acts.map((act) => {
+                      const isProcess = act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD";
+                      const isLocked = isActLocked(act);
+                      
+                      // Convertir Timestamp en Date si nécessaire
+                      const dateSaisie = act.dateSaisie instanceof Timestamp ? act.dateSaisie.toDate() : act.dateSaisie;
+                      const dateEffet = act.dateEffet instanceof Timestamp ? act.dateEffet.toDate() : act.dateEffet;
+                      
+                      return (
+                        <tr
+                          key={act.id}
+                          className={`border-b hover:bg-muted/30 transition-colors ${
+                            isLocked ? "opacity-60 bg-muted/20" : ""
+                          }`}
+                        >
+                          <td className="p-3 text-center align-middle">
+                            {act.note ? (
+                              <span className="inline-flex items-center justify-center w-6 h-6">
+                                <FileTextIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-sm text-center align-middle">{format(dateSaisie, "dd/MM/yyyy")}</td>
+                          <td className="p-3 text-sm text-center align-middle">{act.kind}</td>
+                          <td className="p-3 text-sm font-medium text-center align-middle">{act.clientNom}</td>
+                          <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.numeroContrat}</td>
+                          <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.contratType}</td>
+                          <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.compagnie}</td>
+                          <td className="p-3 text-sm text-center align-middle">{format(dateEffet, "dd/MM/yyyy")}</td>
+                          <td className="p-3 text-sm text-center align-middle">
+                            {act.primeAnnuelle ? formatCurrency(act.primeAnnuelle) : "-"}
+                          </td>
+                          <td className="p-3 text-sm text-center font-semibold align-middle">
+                            {formatCurrency(act.commissionPotentielle)}
+                          </td>
+                          <td className="p-3 text-center align-middle">
+                            {isLocked ? (
+                              <div className="flex items-center justify-center" title="Bloqué">
+                                <Lock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center" title="Débloqué">
+                                <Unlock className="h-5 w-5 text-green-600 dark:text-green-400" />
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
-
-        {/* Tableau des actes */}
-        <Card className="border-l-4 border-l-blue-500 mt-6 ml-6">
-          <CardHeader className="bg-blue-50/30 dark:bg-blue-950/10">
-            <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
-              <ClipboardCheck className="h-4 w-4" />
-              Actes commerciaux
-            </CardTitle>
-            <CardDescription>
-              Liste de tous les actes du mois sélectionné
-            </CardDescription>
-          </CardHeader>
-        <CardContent>
-          {acts.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">Aucun acte pour ce mois</p>
-          ) : (
-            <div className="overflow-x-auto rounded-lg border">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="text-center p-3 font-semibold text-sm border-b w-12"></th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Date de saisie</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Type</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Client</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">N° Contrat</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Type Contrat</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Compagnie</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Date d&apos;effet</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Prime annuelle</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b">Commission</th>
-                    <th className="text-center p-3 font-semibold text-sm border-b w-20">Statut</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {acts.map((act) => {
-                    const isProcess = act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD";
-                    const isLocked = isActLocked(act);
-                    
-                    // Convertir Timestamp en Date si nécessaire
-                    const dateSaisie = act.dateSaisie instanceof Timestamp ? act.dateSaisie.toDate() : act.dateSaisie;
-                    const dateEffet = act.dateEffet instanceof Timestamp ? act.dateEffet.toDate() : act.dateEffet;
-                    
-                    return (
-                      <tr
-                        key={act.id}
-                        className={`border-b hover:bg-muted/30 transition-colors ${
-                          isLocked ? "opacity-60 bg-muted/20" : ""
-                        }`}
-                      >
-                        <td className="p-3 text-center align-middle">
-                          {act.note ? (
-                            <span className="inline-flex items-center justify-center w-6 h-6">
-                              <FileTextIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </td>
-                        <td className="p-3 text-sm text-center align-middle">{format(dateSaisie, "dd/MM/yyyy")}</td>
-                        <td className="p-3 text-sm text-center align-middle">{act.kind}</td>
-                        <td className="p-3 text-sm font-medium text-center align-middle">{act.clientNom}</td>
-                        <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.numeroContrat}</td>
-                        <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.contratType}</td>
-                        <td className="p-3 text-sm text-center align-middle">{isProcess ? "-" : act.compagnie}</td>
-                        <td className="p-3 text-sm text-center align-middle">{format(dateEffet, "dd/MM/yyyy")}</td>
-                        <td className="p-3 text-sm text-center align-middle">
-                          {act.primeAnnuelle ? formatCurrency(act.primeAnnuelle) : "-"}
-                        </td>
-                        <td className="p-3 text-sm text-center font-semibold align-middle">
-                          {formatCurrency(act.commissionPotentielle)}
-                        </td>
-                        <td className="p-3 text-center align-middle">
-                          {isLocked ? (
-                            <div className="flex items-center justify-center" title="Bloqué">
-                              <Lock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                            </div>
-                          ) : (
-                            <div className="flex items-center justify-center" title="Débloqué">
-                              <Unlock className="h-5 w-5 text-green-600 dark:text-green-400" />
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-        </Card>
-      </div>
 
       {/* Section 2 : Classement des commerciaux */}
       <CommercialsRanking monthKey={selectedMonth} />
