@@ -12,6 +12,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Allianz Marseille - SaaS Agence",
   description: "Gestion complète de votre agence : actes commerciaux, commissions et indicateurs",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
