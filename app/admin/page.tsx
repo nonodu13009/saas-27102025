@@ -12,7 +12,7 @@ export default function AdminHome() {
   });
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
+    <div>
       <Card className="w-full max-w-2xl">
         <CardContent className="p-8">
           <div className="text-center space-y-4">
