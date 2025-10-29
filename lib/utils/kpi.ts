@@ -4,21 +4,21 @@ import { COMMISSION_RULES } from "@/lib/firebase/commission-rules";
 export const calculateKPI = (acts: Act[]): KPI => {
   const caMensuel = acts.reduce((sum, act) => sum + (act.primeAnnuelle || 0) + (act.montantVersement || 0), 0);
   
-  const actsAuto = acts.filter(act => 
-    act.contratType === "AUTO_MOTO" || 
-    act.contratType === "PRETERME_AUTO"
-  );
+  // Filtrer uniquement les AN (Apport Nouveau) pour les contrats
+  const actsAN = acts.filter(act => act.kind === "AN");
+  
+  // Contrats Auto : uniquement les AN avec contratType === "AUTO_MOTO"
+  const actsAuto = actsAN.filter(act => act.contratType === "AUTO_MOTO");
   const caAuto = actsAuto.reduce((sum, act) => sum + (act.primeAnnuelle || 0), 0);
   const nbContratsAuto = actsAuto.length;
 
-  const actsAutres = acts.filter(act => 
-    act.contratType !== "AUTO_MOTO" && 
-    act.contratType !== "PRETERME_AUTO"
-  );
+  // Contrats Autres : uniquement les AN avec contratType !== "AUTO_MOTO"
+  const actsAutres = actsAN.filter(act => act.contratType !== "AUTO_MOTO");
   const caAutres = actsAutres.reduce((sum, act) => sum + (act.primeAnnuelle || 0) + (act.montantVersement || 0), 0);
   const nbContratsAutres = actsAutres.length;
 
-  const nbContrats = acts.length;
+  // Nombre total de contrats = uniquement les AN
+  const nbContrats = actsAN.length;
   const ratio = nbContratsAuto === 0 ? 100 : (nbContratsAutres / nbContratsAuto) * 100;
   
   // Calcul du nombre de process (M+3, PRETERME_AUTO, PRETERME_IRD uniquement)

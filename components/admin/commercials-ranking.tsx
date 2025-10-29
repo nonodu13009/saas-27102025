@@ -80,35 +80,41 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
               return sum + ca;
             }, 0);
             
-            const caNonAuto = commercialActs
-              .filter(act => act.contratType !== "AUTO_MOTO")
-              .reduce((sum, act) => {
-                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
-                return sum + ca;
-              }, 0);
-            
             const nbActes = commercialActs.length;
             
             const commissionPotentielle = commercialActs.reduce((sum, act) => {
               return sum + (act.commissionPotentielle || 0);
             }, 0);
             
-            const nbContratsAuto = commercialActs.filter(
+            // Filtrer uniquement les AN pour les contrats et les CA
+            const actsAN = commercialActs.filter(act => act.kind === "AN");
+            
+            const nbContratsAuto = actsAN.filter(
               act => act.contratType === "AUTO_MOTO"
             ).length;
             
-            const nbContratsAutres = commercialActs.filter(
+            const nbContratsAutres = actsAN.filter(
               act => act.contratType !== "AUTO_MOTO"
             ).length;
             
-            const caAuto = commercialActs
+            // CA Auto : uniquement les AN avec contratType === "AUTO_MOTO"
+            const caAuto = actsAN
               .filter(act => act.contratType === "AUTO_MOTO")
               .reduce((sum, act) => {
                 const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
                 return sum + ca;
               }, 0);
             
-            const ratio = caAuto && caAuto > 0 ? (caNonAuto / caAuto) * 100 : 0;
+            // CA Non Auto : uniquement les AN avec contratType !== "AUTO_MOTO"
+            const caNonAuto = actsAN
+              .filter(act => act.contratType !== "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            // Ratio basé sur les nombres de contrats (comme dans kpi.ts)
+            const ratio = nbContratsAuto === 0 ? 100 : (nbContratsAutres / nbContratsAuto) * 100;
             
             const nbProcess = commercialActs.filter(
               act => act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD"
@@ -168,35 +174,41 @@ export function CommercialsRanking({ monthKey }: CommercialsRankingProps) {
               return sum + ca;
             }, 0);
             
-            const caNonAuto = commercialActs
-              .filter(act => act.contratType !== "AUTO_MOTO")
-              .reduce((sum, act) => {
-                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
-                return sum + ca;
-              }, 0);
-            
             const nbActes = commercialActs.length;
             
             const commissionPotentielle = commercialActs.reduce((sum, act) => {
               return sum + (act.commissionPotentielle || 0);
             }, 0);
             
-            const nbContratsAuto = commercialActs.filter(
+            // Filtrer uniquement les AN pour les contrats et les CA
+            const actsAN = commercialActs.filter(act => act.kind === "AN");
+            
+            const nbContratsAuto = actsAN.filter(
               act => act.contratType === "AUTO_MOTO"
             ).length;
             
-            const nbContratsAutres = commercialActs.filter(
+            const nbContratsAutres = actsAN.filter(
               act => act.contratType !== "AUTO_MOTO"
             ).length;
             
-            const caAuto = commercialActs
+            // CA Auto : uniquement les AN avec contratType === "AUTO_MOTO"
+            const caAuto = actsAN
               .filter(act => act.contratType === "AUTO_MOTO")
               .reduce((sum, act) => {
                 const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
                 return sum + ca;
               }, 0);
             
-            const ratio = caAuto && caAuto > 0 ? (caNonAuto / caAuto) * 100 : 0;
+            // CA Non Auto : uniquement les AN avec contratType !== "AUTO_MOTO"
+            const caNonAuto = actsAN
+              .filter(act => act.contratType !== "AUTO_MOTO")
+              .reduce((sum, act) => {
+                const ca = (act.primeAnnuelle || 0) + (act.montantVersement || 0);
+                return sum + ca;
+              }, 0);
+            
+            // Ratio basé sur les nombres de contrats (comme dans kpi.ts)
+            const ratio = nbContratsAuto === 0 ? 100 : (nbContratsAutres / nbContratsAuto) * 100;
             
             const nbProcess = commercialActs.filter(
               act => act.kind === "M+3" || act.kind === "PRETERME_AUTO" || act.kind === "PRETERME_IRD"

@@ -56,8 +56,11 @@ export function ContractTypeRanking({ monthKey }: ContractTypeRankingProps) {
         const commercialData: CommercialRankingByContract[] = commercials.map((commercial) => {
           const commercialActs = allActs.filter(act => act.userId === commercial.id);
           
+          // Filtrer uniquement les AN (Apport Nouveau) pour les contrats
+          const actsAN = commercialActs.filter(act => act.kind === "AN");
+          
           // Filtrer par type de contrat
-          const contractsByType = commercialActs.filter(
+          const contractsByType = actsAN.filter(
             act => act.contratType === selectedContractType
           );
           
