@@ -3,7 +3,26 @@ import admin from "firebase-admin";
 
 // Initialiser Firebase Admin si pas déjà fait
 if (!admin.apps.length) {
-  const serviceAccount = require("../../../../saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json");
+  // Utiliser des variables d'environnement (pour Vercel) ou le fichier local (pour dev)
+  let serviceAccount;
+  
+  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+    // Production : utiliser les variables d'environnement (Vercel)
+    serviceAccount = {
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    };
+  } else {
+    // Développement local : utiliser le fichier JSON
+    try {
+      serviceAccount = require("../../../../saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json");
+    } catch (error) {
+      console.error("Firebase Admin credentials missing");
+      throw new Error('Firebase Admin credentials are missing. Check environment variables or local JSON file.');
+    }
+  }
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
