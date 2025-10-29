@@ -1,38 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import admin from "firebase-admin";
 
-// Initialiser Firebase Admin si pas déjà fait
-if (!admin.apps.length) {
-  // Utiliser des variables d'environnement (pour Vercel) ou le fichier local (pour dev)
-  let serviceAccount;
-  
-  if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
-    // Production : utiliser les variables d'environnement (Vercel)
-    serviceAccount = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    };
-  } else {
-    // Développement local : utiliser le fichier JSON
-    try {
-      serviceAccount = require("../../../../saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json");
-    } catch (error) {
-      console.error("Firebase Admin credentials missing");
-      throw new Error('Firebase Admin credentials are missing. Check environment variables or local JSON file.');
+// Fonction d'initialisation paresseuse de Firebase Admin
+function initializeFirebaseAdmin() {
+  if (!admin.apps.length) {
+    // Utiliser des variables d'environnement (pour Vercel) ou le fichier local (pour dev)
+    let serviceAccount;
+    
+    if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+      // Production : utiliser les variables d'environnement (Vercel)
+      serviceAccount = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      };
+    } else {
+      // Développement local : utiliser le fichier JSON
+      try {
+        serviceAccount = require("../../../../saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json");
+      } catch (error) {
+        console.error("Firebase Admin credentials missing");
+        throw new Error('Firebase Admin credentials are missing. Check environment variables or local JSON file.');
+      }
     }
-  }
 
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  }
+  
+  return admin;
 }
 
 // GET - Liste tous les utilisateurs
 export async function GET(request: NextRequest) {
   try {
-    const auth = admin.auth();
-    const db = admin.firestore();
+    const adminInstance = initializeFirebaseAdmin();
+    const auth = adminInstance.auth();
+    const db = adminInstance.firestore();
 
     console.log("🔍 Début récupération des utilisateurs...");
 
@@ -96,8 +101,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const auth = admin.auth();
-    const db = admin.firestore();
+    const adminInstance = initializeFirebaseAdmin();
+    const auth = adminInstance.auth();
+    const db = adminInstance.firestore();
 
     // Créer l'utilisateur dans Auth
     const userRecord = await auth.createUser({
@@ -145,8 +151,9 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const auth = admin.auth();
-    const db = admin.firestore();
+    const adminInstance = initializeFirebaseAdmin();
+    const auth = adminInstance.auth();
+    const db = adminInstance.firestore();
 
     // Mettre à jour le rôle dans Firestore
     if (role) {
@@ -187,8 +194,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const auth = admin.auth();
-    const db = admin.firestore();
+    const adminInstance = initializeFirebaseAdmin();
+    const auth = adminInstance.auth();
+    const db = adminInstance.firestore();
 
     // Supprimer de Auth
     await auth.deleteUser(uid);
