@@ -5,7 +5,7 @@ import admin from "firebase-admin";
 function initializeFirebaseAdmin() {
   if (!admin.apps.length) {
     // Utiliser des variables d'environnement (pour Vercel) ou le fichier local (pour dev)
-    let serviceAccount;
+    let serviceAccount: admin.ServiceAccount;
     
     if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
       // Production : utiliser les variables d'environnement (Vercel)
@@ -15,9 +15,15 @@ function initializeFirebaseAdmin() {
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       };
     } else {
-      // Développement local : utiliser le fichier JSON
+      // Développement local : charger le fichier JSON dynamiquement
+      // On évite d'utiliser require() directement pour éviter l'erreur au build
+      const fs = require('fs');
+      const path = require('path');
+      
       try {
-        serviceAccount = require("../../../../saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json");
+        const jsonPath = path.join(process.cwd(), 'saas-27102025-firebase-adminsdk-fbsvc-e5024f4d7c.json');
+        const jsonData = fs.readFileSync(jsonPath, 'utf8');
+        serviceAccount = JSON.parse(jsonData);
       } catch (error) {
         console.error("Firebase Admin credentials missing");
         throw new Error('Firebase Admin credentials are missing. Check environment variables or local JSON file.');
